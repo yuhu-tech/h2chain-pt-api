@@ -1,11 +1,94 @@
 type Query {
   me: User!
+  need: Needs
+  search(orderid: String,state:Int,datetime:Int):[Order]
 }
+
+
+type Needs{
+occupations:[String]!
+advisers:[Adviser]!
+}
+
+type Adviser{
+name:String!
+phone:String!
+companyname:String!
+}
+
+type Order {
+orderid: String!
+
+adviser: Adviser!
+originorder:Originorder!
+modifiedorder:[Modifiedorder]
+
+maleyet:Int!
+femaleyet:Int!
+countyet:Int!
+
+}
+
+
+type Originorder{
+  occupation: String!
+  datetime: Int!
+  duration: Int!
+  mode: Int!
+  count: Int!
+  male: Int!
+  female: Int!
+  hotelid: Int!
+  adviserid: Int!
+}
+
+input InputOriginorder {
+  occupation: String!
+  datetime: Int!
+  duration: Int!
+  mode: Int!
+  count: Int!
+  male: Int!
+  female: Int!
+  advisername: String!
+}
+
+input InputModifiedorder{
+  orderid: String!
+  changeddatetime: Int!
+  changedduration: Int!
+  changedmode: Int!
+  changedcount: Int!
+  changedmale: Int!
+  changedfemale: Int!
+}
+
+type Modifiedorder{
+  orderid: String!
+  changeddatetime: Int!
+  changedduration: Int!
+  changedmode: Int!
+  changedcount: Int!
+  changedmale: Int!
+  changedfemale: Int!
+}
+
+
 
 type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
+  changepassword(oldpassword: String!, newpassword: String!): AuthPayload!
+  createorder(createorder:InputOriginorder!): OrderPayload
+  modifyorder(modifiedorder:InputModifiedorder!):OrderPayload
+  closeorder(orderid: String!):OrderPayload
 }
+
+type OrderPayload {
+  orderid: String
+  error: Boolean
+}
+
 
 type AuthPayload {
   token: String!
@@ -15,5 +98,20 @@ type AuthPayload {
 type User {
   id: ID!
   email: String!
-  name: String!
+  password:String!
+  profile:Profile
 }
+
+
+type Profile{
+  id: ID!
+  cover: String!
+  phone: String!
+  name: String!
+  occupation:String!
+  latitude: Float!
+  longitude:Float!
+  address:String!
+  introduction:String!
+}
+
