@@ -1,13 +1,6 @@
 type Query {
   me: User!
-  need: Needs
-  search(orderid: String,state:Int,datetime:Int):[Order]
-}
-
-
-type Needs{
-occupations:[String]!
-advisers:[Adviser]!
+  search(orderid: String,state:Int,datetime:Int,isregistered:Int):[Order]
 }
 
 type Adviser{
@@ -17,20 +10,37 @@ companyname:String!
 }
 
 type Order {
-orderid: String!
-
 adviser: Adviser!
+hotel:Hotel!
+state : Int!
 originorder:Originorder!
 modifiedorder:[Modifiedorder]
-
 maleyet:Int!
 femaleyet:Int!
 countyet:Int!
+postorder:Postorder
+ptorderstate: Int!
+#1 == registered and 2 == refused and 3 == re-registered
+}
 
+type Hotel{
+  hotelid : String!
+  hotelname: String!
+  hotelphone:String!
+  hotelintroduction:String!
+  hoteladdress:String!
+}
+
+type Postorder{
+  orderid:String!
+  salary:Int!
+  workcontent:String!
+  attention:String
 }
 
 
 type Originorder{
+  orderid : String!
   occupation: String!
   datetime: Int!
   duration: Int!
@@ -42,46 +52,65 @@ type Originorder{
   adviserid: Int!
 }
 
-input InputOriginorder {
-  occupation: String!
-  datetime: Int!
-  duration: Int!
-  mode: Int!
-  count: Int!
-  male: Int!
-  female: Int!
-  advisername: String!
-}
-
-input InputModifiedorder{
-  orderid: String!
-  changeddatetime: Int!
-  changedduration: Int!
-  changedmode: Int!
-  changedcount: Int!
-  changedmale: Int!
-  changedfemale: Int!
-}
 
 type Modifiedorder{
-  orderid: String!
-  changeddatetime: Int!
-  changedduration: Int!
-  changedmode: Int!
-  changedcount: Int!
-  changedmale: Int!
-  changedfemale: Int!
+  orderid: String
+  changeddatetime: Int
+  changedduration: Int
+  changedmode: Int
+  changedcount: Int
+  changedmale: Int
+  changedfemale: Int
 }
 
 
 
 type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload!
-  login(email: String!, password: String!): AuthPayload!
-  changepassword(oldpassword: String!, newpassword: String!): AuthPayload!
-  createorder(createorder:InputOriginorder!): OrderPayload
-  modifyorder(modifiedorder:InputModifiedorder!):OrderPayload
-  closeorder(orderid: String!):OrderPayload
+  login(jscode:String!): AuthPayload!
+  registerorder(registerorder:InputRegisterorder!):OrderPayload!
+  createpersonalmsg(personalmsg:InputPersonalmsg!):UserPayload
+  modifypersonalmsg(personalmsg:InputPersonalmsg!):UserPayload
+}
+
+
+
+type UserPayload{
+  user:User!
+  error:Boolean!
+}
+
+
+input InputRegisterorder{
+  orderid:String!
+  register:Int!
+  #register == 1 means attend, register == 2 means cancel 3 == re-registered 4 == not go by himself
+}
+
+
+input InputPersonalmsg{
+  name:String!
+  phonenumber:String!
+  idnumber:String!
+  gender:Int!
+  #1 represents male and 2 represents female
+  height:Int!
+  weight:Int!
+  status:Int!
+  #1 represents students while 2 represents !students
+}
+
+type Personalmsg{
+  name:String!
+  phonenumber:String!
+  idnumber:String!
+  gender:Int!
+  #1 represents male and 2 represents female
+  height:Int!
+  weight:Int!
+  status:Int!
+  #1 represents students while 2 represents !students
+  user:User!
 }
 
 type OrderPayload {
@@ -89,29 +118,15 @@ type OrderPayload {
   error: Boolean
 }
 
-
 type AuthPayload {
   token: String!
   user: User!
 }
 
 type User {
-  id: ID!
-  email: String!
-  password:String!
-  profile:Profile
+  id : ID!
+  wechat: String
+  personalmsg:Personalmsg
 }
 
-
-type Profile{
-  id: ID!
-  cover: String!
-  phone: String!
-  name: String!
-  occupation:String!
-  latitude: Float!
-  longitude:Float!
-  address:String!
-  introduction:String!
-}
 

@@ -1,43 +1,36 @@
 const { getUserId } = require('../utils')
-const {need, orderbyorderid, orderbydate,order2,order3}= require('./mock')
+const {returnuserpayload,myorders,userpayload,need,orderbyorderid,orderbydate,order2,order3,user,historyorders,oningorders,refusedorders}= require('./mock')
+//var  request  = require('../request')
+
 
 console.log(need)
 console.log(orderbyorderid)
 console.log[order2,order3]
 
-
 const query = {
   async me (parent, args, ctx, info) {
     const id = getUserId(ctx)
     console.log(id)
-    const users = await ctx.prisma.users({where:{ id }})
-    console.log(users[0])
-    return users[0]
-  },
-
-  async need (parent,args,ctx,info) {
-    const id = getUserId(ctx)
-    const mneed = need
-    console.log(mneed)
-    return mneed
-  },
+    const wechat = "45678900112"
+    const users = await ctx.prisma.users({where:{wechat}})
+    const personalmsgs = await ctx.prisma.personalmsgs({where:{user:{wechat:wechat}}})
+    const result = {
+      wechat: users[0].wechat,
+      personalmsg: personalmsgs[0]
+    }
+    return(result)
+   },
 
   async search (parent, args, ctx, info){
     const id = getUserId(ctx)
     console.log(id)
-    if (args.orderid != "" && args.orderid != undefined ){
-     const morder = [orderbyorderid]
-     console.log(morder)
-     console.log(args.orderid)
-      return morder
+    if (args.state == 2 ){
+      return historyorders
     }
-        else {
-        const order = [order2,order3]
-          console.log(order)
-          return order
+        else  {
+          return myorders
         }
   }
-
 }
 
 module.exports = { query }
