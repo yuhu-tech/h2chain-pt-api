@@ -625,6 +625,10 @@ const myorders = [
       }
 ]
 
+console.log("historyorders")
+console.log(historyorders)
+console.log("myorders")
+console.log(myorders)
 
 module.exports = {myorders,registerpayload,userpayload,orderbyorderid,orderbydate,order2,order3,user,orderpayload,historyorders}
 

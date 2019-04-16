@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const {returnuserpayload,orderbyorderid,orderbydate,order2,order3,user,userpayload,registerpayload}= require('../mock')
 const {getUserId} = require('../../utils')
+const request = require('async-request')
 /*
 var url = 'http://192.168.0.102:3000/home?name=xmg'
 
@@ -18,40 +19,21 @@ request(url,function (error, response, data) {
 
 
 const auth = {
-  async signup(parent, args, ctx, info) {
-    const password = await bcrypt.hash(args.password, 10)
-    const user = await ctx.prisma.createUser(
-      { ...args, password },
-    )
-    return {
-      token: jwt.sign({ userId: user.id }, 'jwtsecret123'),
-      user,
-    }
-  },
-
   async login(parent, args, ctx, info) {
-   // const users = await ctx.prisma.users({ where: { email } })
-   // if (!users) {
-   //   throw new Error(`No such user found for email: ${email}`)
-   // }
-   // const user = users[0]
-
-   // const valid = await bcrypt.compare(password, user.password)
-   // if (!valid) {
-   //   throw new Error('Invalid password')
-   // }
-   // 转换jscode为微信的openid
-    const wechat = "45678900112"
-    const users = await ctx.prisma.users({where:{wechat}})
-    //在表中找openid，如果找不到，就注册绑定，如果找到了，就直接返回
-    if (users.length == 0)
-    {
-      console.log("can't find this user, registering...")
-      const user = await ctx.prisma.createUser(
-        {wechat:wechat}
-      )
-    //另外，要注册一个personalmsg，和该id关联
-       const personalmsg = await ctx.prisma.createPersonalmsg(
+   console.log("jscode "+args.jscode)
+   const appid= "wx0f2ab26c0f65377d"
+   const secret = "53a4ab65ab0e4c40f97eb70e238bc1d4"
+   var url = "https://api.weixin.qq.com/sns/jscode2session?appid="+appid+"&secret="+secret+"&js_code="+args.jscode+"&grant_type=authorization_code";
+   var data = await request(url,function(error,response,data){})
+   var wechat = JSON.parse(data.body).openid
+   const users = await ctx.prismaClient.users({where:{wechat}})
+       //在表中找openid，如果找不到，就注册绑定，如果找到了，就直接返回
+       if (users.length == 0)
+       {
+       console.log("can't find this user, registering...")
+       const user = await ctx.prismaClient.createUser({wechat:wechat})
+       //另外，要注册一个personalmsg，和该id关联
+       const personalmsg = await ctx.prismaClient.createPersonalmsg(
            {
              name:"",
              phonenumber:"",
@@ -72,18 +54,17 @@ const auth = {
   },
   
   async modifypersonalmsg(parent,args,ctx,info) {
-  //  const wechat = getUserId(ctx)
-  //  console.log(wechat)
-    const wechat = "45678900112"
-    const users = await ctx.prisma.users({where:{wechat}})
-    const personalmsgs = await ctx.prisma.personalmsgs({where:{user:{wechat:wechat}}})
+    const wechat = getUserId(ctx)
+    console.log(wechat)
+    const users = await ctx.prismaClient.users({where:{wechat}})
+    const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{wechat:wechat}}})
     console.log(personalmsgs[0])
     if (users.length == 0)
     {
       console.log("can't find this user")
     }
     else {
-          const returning = await ctx.prisma.updatePersonalmsg(
+          const returning = await ctx.prismaClient.updatePersonalmsg(
             { data: {
                   name: args.personalmsg.name,
                   phonenumber: args.personalmsg.phonenumber,

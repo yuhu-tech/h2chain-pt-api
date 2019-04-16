@@ -1,6 +1,6 @@
 const { GraphQLServer } = require('graphql-yoga')
 const resolvers = require('./resolvers')
-const { prisma } = require('../../../h2chain-datamodel/server/client/src/generated/prisma-client')
+const { prismaClient } = require('../../../h2chain-datamodel/server/client/src/generated/prisma-client')
 
 
 const server = new GraphQLServer({
@@ -8,8 +8,9 @@ const server = new GraphQLServer({
   resolvers,
   context: req => ({
     ...req,
-    prisma
+    prismaClient
   })
 })
 
-server.start(() => console.log('Server is running on http://localhost:4000'))
+const options = {port:4002}
+server.start(options,({port}) => console.log('Server is running on http://localhost:4002'))

@@ -66,7 +66,7 @@ type Modifiedorder{
 
 
 type Mutation {
-  signup(email: String!, password: String!, name: String!): AuthPayload!
+#signup(email: String!, password: String!, name: String!): AuthPayload!
   login(jscode:String!): AuthPayload!
   registerorder(registerorder:InputRegisterorder!):OrderPayload!
   createpersonalmsg(personalmsg:InputPersonalmsg!):UserPayload
