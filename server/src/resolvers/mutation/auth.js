@@ -3,20 +3,6 @@ const jwt = require('jsonwebtoken')
 const {returnuserpayload,orderbyorderid,orderbydate,order2,order3,user,userpayload,registerpayload}= require('../mock')
 const {getUserId} = require('../../utils')
 const request = require('async-request')
-/*
-var url = 'http://192.168.0.102:3000/home?name=xmg'
-
-// 发送Get请求
-// 第一个参数:请求的完整URL,包括参数
-// 第二个参数:请求结果回调函数,会传入3个参数,第一个错误,第二个响应对象,第三个请求数据
-request(url,function (error, response, data) {
-
-    console.log(data)
-
-});
-*/
-
-
 
 const auth = {
   async login(parent, args, ctx, info) {
@@ -26,15 +12,17 @@ const auth = {
    var url = "https://api.weixin.qq.com/sns/jscode2session?appid="+appid+"&secret="+secret+"&js_code="+args.jscode+"&grant_type=authorization_code";
    var data = await request(url,function(error,response,data){})
    var wechat = JSON.parse(data.body).openid
+   console.log(wechat)
    const users = await ctx.prismaClient.users({where:{wechat}})
        //在表中找openid，如果找不到，就注册绑定，如果找到了，就直接返回
-       if (users.length == 0)
+   var user = users[0]
+       if (user == undefined)
        {
        console.log("can't find this user, registering...")
-       const user = await ctx.prismaClient.createUser({wechat:wechat})
-       //另外，要注册一个personalmsg，和该id关联
+       var user = await ctx.prismaClient.createUser({wechat:wechat})
+       
        const personalmsg = await ctx.prismaClient.createPersonalmsg(
-           {
+            {
              name:"",
              phonenumber:"",
              idnumber:"",
@@ -43,21 +31,22 @@ const auth = {
              weight:0,
              status:2,
              user:{connect:{wechat:wechat}}
-          }
-       )
-      console.log(personalmsg)
-    }
-    return {
-      token: jwt.sign({ userId: user.openid }, 'jwtsecret123'),
-      user
-    }
-  },
+            }
+          )
+        console.log(user)
+        }
+        console.log(user)
+        return {
+          token: jwt.sign({ userId: user.id }, 'jwtsecret123'),
+          user
+        }
+      },
   
   async modifypersonalmsg(parent,args,ctx,info) {
-    const wechat = getUserId(ctx)
-    console.log(wechat)
-    const users = await ctx.prismaClient.users({where:{wechat}})
-    const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{wechat:wechat}}})
+    const id = getUserId(ctx)
+    console.log(id)
+    const users = await ctx.prismaClient.users({where:{id}})
+    const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
     console.log(personalmsgs[0])
     if (users.length == 0)
     {

@@ -9,9 +9,11 @@ console.log[order2,order3]
 
 const query = {
   async me (parent, args, ctx, info) {
-    const wechat = getUserId(ctx)
-    const users = await ctx.prismaClient.users({where:{wechat}})
-    const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{wechat:wechat}}})
+    const id = getUserId(ctx)
+    console.log(id)
+    const users = await ctx.prismaClient.users({where:{id}})
+    console.log(users)
+    const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
     const result = {
       wechat: users[0].wechat,
       personalmsg: personalmsgs[0]
