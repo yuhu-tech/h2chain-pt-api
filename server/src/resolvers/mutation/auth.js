@@ -8,10 +8,11 @@ const auth = {
   async login(parent, args, ctx, info) {
    console.log("jscode "+args.jscode)
    const appid= "wx0f2ab26c0f65377d"
-   const secret = "53a4ab65ab0e4c40f97eb70e238bc1d4"
+   const secret = "a5c1eff8b135ade83871f0b230b06ba9"
    var url = "https://api.weixin.qq.com/sns/jscode2session?appid="+appid+"&secret="+secret+"&js_code="+args.jscode+"&grant_type=authorization_code";
    var data = await request(url,function(error,response,data){})
    var wechat = JSON.parse(data.body).openid
+   console.log(wechat)
    console.log(wechat)
    const users = await ctx.prismaClient.users({where:{wechat}})
        //在表中找openid，如果找不到，就注册绑定，如果找到了，就直接返回

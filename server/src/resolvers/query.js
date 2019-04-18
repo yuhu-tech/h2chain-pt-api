@@ -27,12 +27,13 @@ const query = {
       return handles.GetHistoryOrders(id)
     }
         else if (args.isregistered == 1) {
+          id = "some,"+ id
           return handles.PTGetOrderList(id)
           // here is to transfer pt id 
         }
           else if (args.isregistered == 0) {
-            //TODO
-            console.log("here is order been published")
+            id = "none," + id
+            return handles.PTGetOrderList(id)
         }
   }
 }
