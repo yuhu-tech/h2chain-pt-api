@@ -23,12 +23,16 @@ const query = {
 
   async search (parent, args, ctx, info){
     const id = getUserId(ctx)
-    console.log(id)
-    if (args.state == 2 ){
-      return handles.GetHistoryOrders()
+    if (args.state == 2){
+      return handles.GetHistoryOrders(id)
     }
-        else  {
-          return handles.PtGetOrderList
+        else if (args.isregistered == 1) {
+          return handles.PTGetOrderList(id)
+          // here is to transfer pt id 
+        }
+          else if (args.isregistered == 0) {
+            //TODO
+            console.log("here is order been published")
         }
   }
 }

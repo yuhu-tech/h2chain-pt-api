@@ -24,10 +24,10 @@ function queryPt(request) {
     })
 }
 
-async function GetHistoryOrders(){
+async function GetHistoryOrders(id){
     try {
         var request = new messages.QueryRequest();
-        request.setPtid('001');
+        request.setPtid(id);
         request.setStatus(3)
         var response = await queryOrder(request);
         var res = JSON.parse(response.array[0])
@@ -69,9 +69,7 @@ async function GetHistoryOrders(){
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
-                request.setPtid('001');
-                request.setRegistrationchannel('');
-                request.setPtstatus(-1);
+                request.setPtid(id);
                 var response = await queryPt(request)
                 obj['ptorderstate'] = response.array[0][0][7]
             } catch (error) {
@@ -91,12 +89,13 @@ async function GetHistoryOrders(){
     }
 }
 
-async function PTGetOrderList() {
+async function PTGetOrderList(id) {
     try {
         var request = new messages.QueryRequest();
-        request.setPtid('001');
-        request.setStatus(12)
+        request.setPtid(id);//get pt id
+        request.setStatus(2)
         var response = await queryOrder(request);
+        console.log(response)
         var res = JSON.parse(response.array[0])
         var orderList = []
         for (var i = 0; i < res.orderOrigins.length; i++) {
@@ -152,8 +151,8 @@ async function PTGetOrderList() {
             
  
             // 查询该PT的历史订单
-            var historyorders = []
-            historyorders = GetHistoryOrders()
+        //    var historyorders = []
+        //  historyorders = GetHistoryOrders()
             
 
 
@@ -161,9 +160,7 @@ async function PTGetOrderList() {
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
-                request.setPtid('001');
-                request.setRegistrationchannel('');
-                request.setPtstatus(-1);
+                request.setPtid(id);
                 var response = await queryPt(request)
                 obj['isregistered'] = response.array[0][0][7]
             } catch (error) {
@@ -175,8 +172,6 @@ async function PTGetOrderList() {
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
-                request.setPtid('');
-                request.setRegistrationchannel('');
                 request.setPtstatus(1);
                 var response = await queryPt(request)
                 obj['countyet'] = response.array[0].length
@@ -192,20 +187,17 @@ async function PTGetOrderList() {
             obj['adviser'] = adviser
             obj['hotel'] = hotel
             obj['postorder'] = postorder
-            obj['historyorders'] = historyorders
+      //      obj['historyorders'] = historyorders
 
 
             orderList.push(obj)
         }
         //console.log(res.orderOrigins[0])
-        console.log(orderList)
-        console.log(orderList.length)
+        return orderList
     } catch (error) {
         throw error
     }
 }
 
-function main() {
-    PTGetOrderList()
-}
-main();
+
+module.exports = { PTGetOrderList,queryOrder,queryPt,GetHistoryOrders }
