@@ -21,7 +21,6 @@ const auth = {
        {
        console.log("can't find this user, registering...")
        var user = await ctx.prismaClient.createUser({wechat:wechat})
-       
        const personalmsg = await ctx.prismaClient.createPersonalmsg(
             {
              name:"",

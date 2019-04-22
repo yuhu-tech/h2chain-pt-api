@@ -89,9 +89,10 @@ async function GetHistoryOrders(id){
     }
 }
 
-async function PTGetOrderList(id) {
+async function PTGetOrderList(initialid,id) {
     try {
         var request = new messages.QueryRequest();
+        console.log("here is id"+ id)
         request.setPtid(id);//get pt id
         request.setStatus(2)
         var response = await queryOrder(request);
@@ -149,23 +150,21 @@ async function PTGetOrderList(id) {
                 postorder['attention'] = res.orderOrigins[i].orderAdviserModifies[0].attention
             }
             
- 
-            // 查询该PT的历史订单
-        //    var historyorders = []
-        //  historyorders = GetHistoryOrders()
-            
-
-
             // 查询当前订单下该PT的状态
+            if (id.indexOf("some") >= 0 ){
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
-                request.setPtid(id);
+                request.setPtid(initialid);
+                console.log("orderoriginid is "+res.orderOrigins[i].id)
+                console.log(id)
                 var response = await queryPt(request)
-                obj['isregistered'] = response.array[0][0][7]
+                console.log(response.array[0][0][7])
+                obj['ptorderstate'] = response.array[0][0][7]
             } catch (error) {
                 throw error
             }
+            }   
 
             // 查询当前已报名的男女人数
             // 调用queryPTOfOrder()接口查询，某个订单下已报名PT的总人数
@@ -187,12 +186,10 @@ async function PTGetOrderList(id) {
             obj['adviser'] = adviser
             obj['hotel'] = hotel
             obj['postorder'] = postorder
-      //      obj['historyorders'] = historyorders
 
 
             orderList.push(obj)
         }
-        //console.log(res.orderOrigins[0])
         return orderList
     } catch (error) {
         throw error

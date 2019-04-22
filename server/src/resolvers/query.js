@@ -14,6 +14,7 @@ const query = {
     const users = await ctx.prismaClient.users({where:{id}})
     console.log(users)
     const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
+    console.log(user[0])
     const result = {
       wechat: users[0].wechat,
       personalmsg: personalmsgs[0]
@@ -22,18 +23,18 @@ const query = {
    },
 
   async search (parent, args, ctx, info){
-    const id = getUserId(ctx)
+    var initialid = getUserId(ctx)
     if (args.state == 2){
-      return handles.GetHistoryOrders(id)
+      return handles.GetHistoryOrders(initialid)
     }
         else if (args.isregistered == 1) {
-          id = "some,"+ id
-          return handles.PTGetOrderList(id)
+          id = "some,"+ initialid
+          return handles.PTGetOrderList(initialid,id)
           // here is to transfer pt id 
         }
           else if (args.isregistered == 0) {
-            id = "none," + id
-            return handles.PTGetOrderList(id)
+            id = "none," + initialid
+            return handles.PTGetOrderList(initialid,id)
         }
   }
 }
