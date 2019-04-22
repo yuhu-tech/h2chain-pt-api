@@ -24,7 +24,7 @@ function queryPt(request) {
     })
 }
 
-async function GetHistoryOrders(id){
+async function GetHistoryOrders(ctx,initialid,id){
     try {
         var request = new messages.QueryRequest();
         request.setPtid(id);
@@ -34,10 +34,16 @@ async function GetHistoryOrders(id){
         var historyorders = []
         for (var i = 0; i < res.orderOrigins.length; i++) {
             var obj = {}
-
+           
             var adviser = {}
-            adviser['name'] = res.orderOrigins[i].adviserId         // 这里全部留了 adviserId 通过这个获取adviser信息
-            adviser['companyname'] = res.orderOrigins[i].adviserId
+            //finished to retrieve adviser message to show to pts
+            var adviserId = res.orederOrigins[i].adviserId
+            var advisers = await ctx.prismaHr.users(where:{id:adviserId})
+            var adviserProfiles = await ctx.prismaHr.profiles({where:{user:{id:adviserId}}})
+            adviser['name'] = "this area can be omitted"
+            adviser['phone'] = adviserProfiles[0].phone
+            adviser['companyname'] = adviserProfiles[0].companyname
+            adviser['introduction'] = adviserProfiles[0].introduction
 
             var originorder = {}
             originorder['orderid'] = res.orderOrigins[i].id
@@ -58,11 +64,14 @@ async function GetHistoryOrders(id){
             }
 
             var hotel = {}
-            hotel['hotelid'] = res.orderOrigins[i].hotelId // 这里全部留了 hotelId 通过这个获取hotel信息
-            hotel['hotelname'] = res.orderOrigins[i].hotelId
-            hotel['hotelphone'] = res.orderOrigins[i].hotelId
-            hotel['hotelintroduction'] = res.orderOrigins[i].hotelId
-            hotel['hoteladdress'] = res.orderOrigins[i].hotelId 
+            //finished to retrieve adviser message to show to pts
+            var hotelId = res.orderOrigins[i].hotelID
+            var hotels = await ctx.prismaHotel.users(where:{id:hotelId})
+            var hotelProfiles =  await ctx.prismaHotel.profiles({where:{user:{id:hotelId}}})
+            hotel['hotelname'] = hotelProfiles[0].name
+            hotel['hotelphone'] = hotelProfiles[0].phone
+            hotel['hotelintroduction'] = hotelProfiles[0].introduction
+            hotel['hoteladdress'] = hotelProfiles[0].address
 
 
             // 查询当前订单下该PT的状态
@@ -89,7 +98,7 @@ async function GetHistoryOrders(id){
     }
 }
 
-async function PTGetOrderList(initialid,id) {
+async function PTGetOrderList(ctx,initialid,id) {
     try {
         var request = new messages.QueryRequest();
         console.log("here is id"+ id)
@@ -130,17 +139,24 @@ async function PTGetOrderList(initialid,id) {
             originorder['orderstate'] = res.orderOrigins[i].status - 1
 
             var adviser = {}
-            adviser['name'] = res.orderOrigins[i].adviserId // 这里全部留了 adviserId 通过这个获取adviser信息
-            adviser['phone'] = res.orderOrigins[i].adviserId
-            adviser['companyname'] = res.orderOrigins[i].adviserId
-            adviser['introduction'] = res.orderOrigins[i].adviserId
+            //FINISHED to retrieve adviser name,phone,companyname,and introduction
+            var adviserId = res.orederOrigins[i].adviserId
+            var advisers = await ctx.prismaHr.users(where:{id:adviserId})
+            var adviserProfiles = await ctx.prismaHr.profiles({where:{user:{id:adviserId}}})
+            adviser['name'] = "this area can be omitted"
+            adviser['phone'] = adviserProfiles[0].phone
+            adviser['companyname'] = adviserProfiles[0].companyname
+            adviser['introduction'] = adviserProfiles[0].introduction
 
             var hotel = {}
-            hotel['hotelid'] = res.orderOrigins[i].hotelId // 这里全部留了 hotelId 通过这个获取hotel信息
-            hotel['hotelname'] = res.orderOrigins[i].hotelId
-            hotel['hotelphone'] = res.orderOrigins[i].hotelId
-            hotel['hotelintroduction'] = res.orderOrigins[i].hotelId
-            hotel['hoteladdress'] = res.orderOrigins[i].hotelId
+            //FINISHED to retrieve hotel messages to show to pts
+            var hotelId = res.orderOrigins[i].hotelID
+            var hotels = await ctx.prismaHotel.users(where:{id:hotelId})
+            var hotelProfiles =  await ctx.prismaHotel.profiles({where:{user:{id:hotelId}}})
+            hotel['hotelname'] = hotelProfiles[0].name
+            hotel['hotelphone'] = hotelProfiles[0].phone
+            hotel['hotelintroduction'] = hotelProfiles[0].introduction
+            hotel['hoteladdress'] = hotelProfiles[0].address
 
             var postorder = {}
             if (res.orderOrigins[i].orderAdviserModifies.length != 0){
@@ -151,15 +167,13 @@ async function PTGetOrderList(initialid,id) {
             }
             
             // 查询当前订单下该PT的状态
+            // if we are searching what the pt has registered we have to search ptorderstate
             if (id.indexOf("some") >= 0 ){
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
                 request.setPtid(initialid);
-                console.log("orderoriginid is "+res.orderOrigins[i].id)
-                console.log(id)
                 var response = await queryPt(request)
-                console.log(response.array[0][0][7])
                 obj['ptorderstate'] = response.array[0][0][7]
             } catch (error) {
                 throw error
@@ -168,6 +182,7 @@ async function PTGetOrderList(initialid,id) {
 
             // 查询当前已报名的男女人数
             // 调用queryPTOfOrder()接口查询，某个订单下已报名PT的总人数
+            //TODO to get the male and female
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);

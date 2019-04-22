@@ -25,17 +25,17 @@ const query = {
   async search (parent, args, ctx, info){
     var initialid = getUserId(ctx)
     if (args.state == 2){
-      return handles.GetHistoryOrders(initialid)
+       id = "some," + initialid 
+      return handles.GetHistoryOrders(ctx,initialid,id)
     }
         else if (args.isregistered == 1) {
           id = "some,"+ initialid
-          return handles.PTGetOrderList(initialid,id)
-          // here is to transfer pt id 
+          return handles.PTGetOrderList(ctx,initialid,id)
         }
           else if (args.isregistered == 0) {
             id = "none," + initialid
-            return handles.PTGetOrderList(initialid,id)
-        }
+            return handles.PTGetOrderList(ctx,initialid,id)
+          }
   }
 }
 
