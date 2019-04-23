@@ -32,9 +32,9 @@ type Hotel{
 }
 
 type Postorder{
-  orderid:String!
-  salary:Int!
-  workcontent:String!
+  orderid:String
+  salary:Int
+  workcontent:String
   attention:String
 }
 

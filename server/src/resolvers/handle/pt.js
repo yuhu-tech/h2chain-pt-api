@@ -38,7 +38,7 @@ async function GetHistoryOrders(ctx,initialid,id){
             var adviser = {}
             //finished to retrieve adviser message to show to pts
             var adviserId = res.orederOrigins[i].adviserId
-            var advisers = await ctx.prismaHr.users(where:{id:adviserId})
+            var advisers = await ctx.prismaHr.users({where:{id:adviserId}})
             var adviserProfiles = await ctx.prismaHr.profiles({where:{user:{id:adviserId}}})
             adviser['name'] = "this area can be omitted"
             adviser['phone'] = adviserProfiles[0].phone
@@ -66,7 +66,7 @@ async function GetHistoryOrders(ctx,initialid,id){
             var hotel = {}
             //finished to retrieve adviser message to show to pts
             var hotelId = res.orderOrigins[i].hotelID
-            var hotels = await ctx.prismaHotel.users(where:{id:hotelId})
+            var hotels = await ctx.prismaHotel.users({where:{id:hotelId}})
             var hotelProfiles =  await ctx.prismaHotel.profiles({where:{user:{id:hotelId}}})
             hotel['hotelname'] = hotelProfiles[0].name
             hotel['hotelphone'] = hotelProfiles[0].phone
@@ -140,8 +140,8 @@ async function PTGetOrderList(ctx,initialid,id) {
 
             var adviser = {}
             //FINISHED to retrieve adviser name,phone,companyname,and introduction
-            var adviserId = res.orederOrigins[i].adviserId
-            var advisers = await ctx.prismaHr.users(where:{id:adviserId})
+            var adviserId = res.orderOrigins[i].adviserId
+            var advisers = await ctx.prismaHr.users({where:{id:adviserId}})
             var adviserProfiles = await ctx.prismaHr.profiles({where:{user:{id:adviserId}}})
             adviser['name'] = "this area can be omitted"
             adviser['phone'] = adviserProfiles[0].phone
@@ -151,7 +151,7 @@ async function PTGetOrderList(ctx,initialid,id) {
             var hotel = {}
             //FINISHED to retrieve hotel messages to show to pts
             var hotelId = res.orderOrigins[i].hotelID
-            var hotels = await ctx.prismaHotel.users(where:{id:hotelId})
+            var hotels = await ctx.prismaHotel.users({where:{id:hotelId}})
             var hotelProfiles =  await ctx.prismaHotel.profiles({where:{user:{id:hotelId}}})
             hotel['hotelname'] = hotelProfiles[0].name
             hotel['hotelphone'] = hotelProfiles[0].phone
@@ -189,9 +189,20 @@ async function PTGetOrderList(ctx,initialid,id) {
                 request.setPtstatus(1);
                 var response = await queryPt(request)
                 obj['countyet'] = response.array[0].length
+                //initial obj[maleyet] and obj[femaleyet]
+                if (obj['maleyet'] == undefined) {obj['maleyet'] = 0}
+                if (obj['femaleyet'] == undefined) {obj['femaleyet'] = 0}
+                for (var k = 0; k < obj['countyet']; k++){
+                var ptid = response.array[0][k][0]
+                var personalmsgs  = await ctx.prismaClient.personalmsgs({where:{user:{id:ptid}}})
+                // to judge if there is a male or female
+                if (personalmsgs[0].gender == 1)  {
+                  obj['maleyet']= obj['maleyet'] + 1
+                } else {
+                  obj['femaleyet'] == obj['femaleyet'] + 1
+                }
+              }
                 // ptid  response.array[0][0][0]
-                obj['maleyet'] = 2
-                obj['femaleyet'] = 1
             } catch (error) {
                 throw error
             }

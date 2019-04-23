@@ -52,7 +52,8 @@ const auth = {
     {
       console.log("can't find this user")
     }
-    else {
+    else { 
+          console.log(args.personalmsg)
           const returning = await ctx.prismaClient.updatePersonalmsg(
             { data: {
                   name: args.personalmsg.name,
