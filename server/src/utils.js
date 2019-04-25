@@ -52,9 +52,41 @@ function getOpenId(jsCode, num) {
     })
 }
 
+function getSessionKey(jsCode, num) {
+    return new Promise((resolve,reject)=>{
+        var appid = ''
+        var secret = ''
+        if (num === 1) {
+            appid = config.Appids.testHotel
+            secret = config.Secrets.testHotel
+        } else if (num === 2) {
+            appid = config.Appids.testAdviser
+            secret = config.Secrets.testAdviser
+        } else if (num === 3) {
+            appid = config.Appids.testPt
+            secret = config.Secrets.testPt
+        } else {
+            resolve()
+        }
+
+        const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${jsCode}&grant_type=authorization_code`
+
+        request(url, function (error, response, body) {
+
+            if (!error && response.statusCode == 200) {
+                //console.log(body)
+                const sessionkey = JSON.parse(body).session_key;
+                resolve(session_key)
+            }else{
+                reject(error)
+            }
+        });
+    })
+}
 
 module.exports = {
   getUserId,
   AuthError,
-  getOpenId
+  getOpenId,
+  getSessionKey
 }

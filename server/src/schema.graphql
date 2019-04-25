@@ -71,7 +71,8 @@ type Mutation {
   login(jscode:String!): AuthPayload!
   registerorder(registerorder:InputRegisterorder!):OrderPayload!
   createpersonalmsg(personalmsg:InputPersonalmsg!):UserPayload
-  modifypersonalmsg(personalmsg:InputPersonalmsg!):UserPayload
+  modifypersonalmsg(personalmsg:InputPersonalmsg!):Boolean
+  updatewechat:Boolean
 }
 
 

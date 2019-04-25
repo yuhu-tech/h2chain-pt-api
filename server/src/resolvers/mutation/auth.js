@@ -36,10 +36,9 @@ const auth = {
   
   async modifypersonalmsg(parent,args,ctx,info) {
     const id = getUserId(ctx)
-    console.log(id)
     const users = await ctx.prismaClient.users({where:{id}})
     const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
-    console.log(personalmsgs[0])
+   try{
     if (users.length == 0)
     {
       console.log("can't find this user")
@@ -60,16 +59,11 @@ const auth = {
              }
           )
     }
-    console.log(registerpayload)
-    return registerpayload
+    return true
+    } catch (error){
+      throw(error)
+    }
    },
-    //如果users不为空
-    //获取args内的信息并更新到Users
-    //否则返回错误：未找到该用户
-
-  async registerorder(parent,args,ctx,info){
-    return registerpayload
-  }
 }
 
 
