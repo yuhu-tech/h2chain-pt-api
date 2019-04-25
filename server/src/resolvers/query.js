@@ -1,20 +1,13 @@
-const { getUserId } = require('../utils')
-const {returnuserpayload,myorders,userpayload,need,orderbyorderid,orderbydate,order2,order3,user,historyorders,oningorders,refusedorders}= require('./mock')
-//var  request  = require('../request')
+const { getUserId,getSessionKey } = require('../utils')
 const handles = require('../resolvers/handle/pt')
-
-console.log(need)
-console.log(orderbyorderid)
-console.log[order2,order3]
+const WXBizDataCrypt = require('../WXBizDataCrypt')
+const config = require('../../conf/config')
 
 const query = {
   async me (parent, args, ctx, info) {
     const id = getUserId(ctx)
-    console.log(id)
     const users = await ctx.prismaClient.users({where:{id}})
-    console.log(users)
     const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
-    console.log(user[0])
     const result = {
       wechat: users[0].wechat,
       personalmsg: personalmsgs[0]
@@ -36,6 +29,15 @@ const query = {
             id = "none," + initialid
             return handles.PTGetOrderList(ctx,initialid,id)
           }
+  },
+
+  async getPhoneNumber(parent,args,ctx,info) {
+    var sessionKey = await getSessionKey(args.jscode,3)
+    var encryptedData = args.encryptedData
+    var iv = args.iv
+    var pc = new WXBizDataCrypt(appId,sessionKey)
+    var data = pc.decryptData(encryptedData,iv)
+    return data.phoneNumber
   }
 }
 

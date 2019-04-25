@@ -1,5 +1,6 @@
 type Query {
   me: User!
+  getPhoneNumber(encryptedData:String!,iv:String!,jscode:String!):String
   search(orderid: String,state:Int,datetime:Int,isregistered:Int):[Order]
 }
 
