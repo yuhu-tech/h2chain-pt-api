@@ -34,7 +34,7 @@ async function GetHistoryOrders(ctx,initialid,id){
         var historyorders = []
         for (var i = 0; i < res.orderOrigins.length; i++) {
             var obj = {}
-           
+            console.log("length is ..."+res.orderOrigins.length) 
             var adviser = {}
             //finished to retrieve adviser message to show to pts
             var adviserId = res.orederOrigins[i].adviserId
@@ -98,10 +98,11 @@ async function GetHistoryOrders(ctx,initialid,id){
     }
 }
 
-async function PTGetOrderList(ctx,initialid,id) {
+async function PTGetOrderList(ctx,initialid,id,orderid) {
     try {
+        console.log("orderid is ...." + orderid)
         var request = new messages.QueryRequest();
-        console.log("here is id"+ id)
+        if (orderid != null && orderid != undefined ){request.setOrderid = orderid} 
         request.setPtid(id);//get pt id
         request.setStatus(2)
         var response = await queryOrder(request);
@@ -117,7 +118,7 @@ async function PTGetOrderList(ctx,initialid,id) {
                     var modifiedorderObj = {}
                     modifiedorderObj['orderid'] = res.orderOrigins[i].id
                     modifiedorderObj['changeddatetime'] = res.orderOrigins[i].orderHotelModifies[j].dateTime
-                    modifiedorderObj['changedduration'] = res.orderOrigins[i].orderHotelModifies[j].duration
+                    modifiedorderObj['changedduration'] = res.orderOrigins[i].orderHotelModifies[j].duration/3600
                     modifiedorderObj['changedmode'] = res.orderOrigins[i].orderHotelModifies[j].mode
                     modifiedorderObj['changedcount'] = res.orderOrigins[i].orderHotelModifies[j].count
                     modifiedorderObj['changedmale'] = res.orderOrigins[i].orderHotelModifies[j].countMale
@@ -131,7 +132,7 @@ async function PTGetOrderList(ctx,initialid,id) {
             originorder['orderid'] = res.orderOrigins[i].id
             originorder['occupation'] = res.orderOrigins[i].job
             originorder['datetime'] = res.orderOrigins[i].datetime
-            originorder['duration'] = res.orderOrigins[i].duration
+            originorder['duration'] = res.orderOrigins[i].duration/3600
             originorder['mode'] = res.orderOrigins[i].mode
             originorder['count'] = res.orderOrigins[i].count
             originorder['male'] = res.orderOrigins[i].countMale
@@ -212,6 +213,7 @@ async function PTGetOrderList(ctx,initialid,id) {
             obj['adviser'] = adviser
             obj['hotel'] = hotel
             obj['postorder'] = postorder
+            obj['state'] = res.orderOrigins[i].status - 1 
 
 
             orderList.push(obj)

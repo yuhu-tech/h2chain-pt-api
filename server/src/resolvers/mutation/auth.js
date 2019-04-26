@@ -38,7 +38,7 @@ const auth = {
     const id = getUserId(ctx)
     const users = await ctx.prismaClient.users({where:{id}})
     const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
-   try{
+    try {
     if (users.length == 0)
     {
       console.log("can't find this user")

@@ -22,6 +22,22 @@ const order = {
     });
     var error = true
     return error
+  },
+
+  async modifyptoforder(parent,args,ctx,info){
+    try {
+    var request = new messages.ModifyPtRequest();
+        request.setOrderid(args.orderid);       // OrderID 必传
+        request.setPtid(args.ptid);                                   // 筛选条件，不用时传空
+        //we can only change the status of 4 to 3 in pt 
+        request.setTargetstatus(3);                           // PT 目标状态 筛选条件，不同传 -1  
+        request.setSourcestatus(4);                           // PT 原始状态  
+    client.modifyPTOfOrder(request,function(err,response){
+        console.log(response.array)
+    })
+       } catch (error) {
+         throw (error)
+      }
   }
 }
 

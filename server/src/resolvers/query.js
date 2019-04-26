@@ -17,17 +17,21 @@ const query = {
 
   async search (parent, args, ctx, info){
     var initialid = getUserId(ctx)
-    if (args.state == 2){
+    if (args.orderid != null && args.orderid != undefined) {
+       id = "some," + initialid
+       return handles.PTGetOrderList(ctx,initialid,id,args.orderid)
+    }  
+    else if (args.state == 2){
        id = "some," + initialid 
-      return handles.GetHistoryOrders(ctx,initialid,id)
+      return handles.GetHistoryOrders(ctx,initialid,id,args.orderid)
     }
         else if (args.isregistered == 1) {
           id = "some,"+ initialid
-          return handles.PTGetOrderList(ctx,initialid,id)
+          return handles.PTGetOrderList(ctx,initialid,id,args.orderid)
         }
           else if (args.isregistered == 0) {
             id = "none," + initialid
-            return handles.PTGetOrderList(ctx,initialid,id)
+            return handles.PTGetOrderList(ctx,initialid,id,args.orderid)
           }
   },
 
