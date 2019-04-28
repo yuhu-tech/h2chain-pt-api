@@ -34,10 +34,9 @@ async function GetHistoryOrders(ctx,initialid,id){
         var historyorders = []
         for (var i = 0; i < res.orderOrigins.length; i++) {
             var obj = {}
-            console.log("length is ..."+res.orderOrigins.length) 
             var adviser = {}
             //finished to retrieve adviser message to show to pts
-            var adviserId = res.orederOrigins[i].adviserId
+            var adviserId = res.orderOrigins[i].adviserId
             var advisers = await ctx.prismaHr.users({where:{id:adviserId}})
             var adviserProfiles = await ctx.prismaHr.profiles({where:{user:{id:adviserId}}})
             adviser['name'] = "this area can be omitted"
@@ -78,8 +77,9 @@ async function GetHistoryOrders(ctx,initialid,id){
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
-                request.setPtid(id);
+                request.setPtid(initialid);
                 var response = await queryPt(request)
+                console.log(response.array[0][0])
                 obj['ptorderstate'] = response.array[0][0][7]
             } catch (error) {
                 throw error
@@ -92,6 +92,7 @@ async function GetHistoryOrders(ctx,initialid,id){
 
             historyorders.push(obj)
         }
+        console.log(historyorders)
         return historyorders
     } catch (error) {
         throw error
@@ -100,7 +101,6 @@ async function GetHistoryOrders(ctx,initialid,id){
 
 async function PTGetOrderList(ctx,initialid,id,orderid) {
     try {
-        console.log("orderid is ...." + orderid)
         var request = new messages.QueryRequest();
         if (orderid != null && orderid != undefined ){request.setOrderid = orderid} 
         request.setPtid(id);//get pt id
@@ -125,7 +125,6 @@ async function PTGetOrderList(ctx,initialid,id,orderid) {
                     modifiedorderObj['changedfemale'] = res.orderOrigins[i].orderHotelModifies[j].count - res.orderOrigins[i].orderHotelModifies[j].countMale
                     modifiedorder.push(modifiedorderObj)
                 }
-
             }
 
             var originorder = {}
@@ -187,7 +186,7 @@ async function PTGetOrderList(ctx,initialid,id,orderid) {
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
-                request.setPtstatus(1);
+                request.setPtstatus(13);
                 var response = await queryPt(request)
                 obj['countyet'] = response.array[0].length
                 //initial obj[maleyet] and obj[femaleyet]

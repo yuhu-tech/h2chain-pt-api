@@ -16,12 +16,12 @@ hotel:Hotel!
 state : Int!
 originorder:Originorder!
 modifiedorder:[Modifiedorder]
-maleyet:Int!
-femaleyet:Int!
-countyet:Int!
+maleyet:Int
+femaleyet:Int
+countyet:Int
 postorder:Postorder
-ptorderstate: Int!
-#1 == registered and 2 == refused and 3 == re-registered
+ptorderstate: Int
+#1 == registered and 2 == refused and 3 == re-registered and 4 == to-registered and 5 == give up
 }
 
 type Hotel{
@@ -73,7 +73,7 @@ type Mutation {
   createpersonalmsg(personalmsg:InputPersonalmsg!):UserPayload
   modifypersonalmsg(personalmsg:InputPersonalmsg!):Boolean!
   updatewechat:Boolean!
-  modifyptoforder(orderid:String!,ptid:String!):Boolean!
+  modifyptoforder(orderid:String!,ptstatus:Int!):Boolean!
 }
 
 
