@@ -42,7 +42,7 @@ function getOpenId(jsCode, num) {
         request(url, function (error, response, body) {
 
             if (!error && response.statusCode == 200) {
-                //console.log(body)
+                console.log(body)
                 const openid = JSON.parse(body).openid;
                 resolve(openid)
             }else{
@@ -74,9 +74,9 @@ function getSessionKey(jsCode, num) {
         request(url, function (error, response, body) {
 
             if (!error && response.statusCode == 200) {
-                //console.log(body)
+                console.log(body)
                 const sessionkey = JSON.parse(body).session_key;
-                resolve(session_key)
+                resolve(sessionkey)
             }else{
                 reject(error)
             }

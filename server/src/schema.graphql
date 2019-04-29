@@ -13,7 +13,7 @@ companyname:String!
 type Order {
 adviser: Adviser!
 hotel:Hotel!
-state : Int!
+state : Int
 originorder:Originorder!
 modifiedorder:[Modifiedorder]
 maleyet:Int

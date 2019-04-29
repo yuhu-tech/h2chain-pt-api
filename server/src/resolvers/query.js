@@ -1,4 +1,4 @@
-const { getUserId,getSessionKey } = require('../utils')
+const { getUserId,getSessionKey,getOpenId } = require('../utils')
 const handles = require('../resolvers/handle/pt')
 const WXBizDataCrypt = require('../WXBizDataCrypt')
 const config = require('../../conf/config')
@@ -17,9 +17,8 @@ const query = {
 
   async search (parent, args, ctx, info){
     var initialid = getUserId(ctx)
-    if (args.orderid != null && args.orderid != undefined) {
+    if (args.orderid != null && args.orderid != undefined && args.state != 2) {
        id = "some," + initialid
-       console.log("searching here")
        return handles.PTGetOrderList(ctx,initialid,id,args.orderid,args.datetime)
     }  
     else if (args.state == 2){
@@ -38,10 +37,10 @@ const query = {
 
   async getPhoneNumber(parent,args,ctx,info) {
     var sessionKey = await getSessionKey(args.jscode,3)
-    var encryptedData = args.encryptedData
     var iv = args.iv
-    var pc = new WXBizDataCrypt(appId,sessionKey)
-    var data = pc.decryptData(encryptedData,iv)
+    appid = config.Appids.testPt
+    var pc = new WXBizDataCrypt(appid,sessionKey)
+    var data = pc.decryptData(args.encryptedData,iv)
     return data.phoneNumber
   }
 }

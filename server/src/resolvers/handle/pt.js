@@ -24,9 +24,11 @@ function queryPt(request) {
     })
 }
 
-async function GetHistoryOrders(ctx,initialid,id){
+async function GetHistoryOrders(ctx,initialid,id,orderid,datetime){
     try {
+        console.log(orderid)
         var request = new messages.QueryRequest();
+        if(orderid != null && orderid != undefined){request.setOrderid(orderid)}
         request.setPtid(id);
         request.setStatus(3)
         var response = await queryOrder(request);
@@ -39,7 +41,7 @@ async function GetHistoryOrders(ctx,initialid,id){
             var adviserId = res.orderOrigins[i].adviserId
             var advisers = await ctx.prismaHr.users({where:{id:adviserId}})
             var adviserProfiles = await ctx.prismaHr.profiles({where:{user:{id:adviserId}}})
-            adviser['name'] = "this area can be omitted"
+            adviser['name'] = advisers[0].name
             adviser['phone'] = adviserProfiles[0].phone
             adviser['companyname'] = adviserProfiles[0].companyname
             adviser['introduction'] = adviserProfiles[0].introduction
@@ -131,6 +133,7 @@ async function GetHistoryOrders(ctx,initialid,id){
     }
 }
 
+
 async function PTGetOrderList(ctx,initialid,id,orderid,datetime) {
     try {
         var request = new messages.QueryRequest();
@@ -176,7 +179,7 @@ async function PTGetOrderList(ctx,initialid,id,orderid,datetime) {
             var adviserId = res.orderOrigins[i].adviserId
             var advisers = await ctx.prismaHr.users({where:{id:adviserId}})
             var adviserProfiles = await ctx.prismaHr.profiles({where:{user:{id:adviserId}}})
-            adviser['name'] = "this area can be omitted"
+            adviser['name'] = advisers[0].name
             adviser['phone'] = adviserProfiles[0].phone
             adviser['companyname'] = adviserProfiles[0].companyname
             adviser['introduction'] = adviserProfiles[0].introduction
