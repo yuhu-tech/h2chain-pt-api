@@ -19,19 +19,20 @@ const query = {
     var initialid = getUserId(ctx)
     if (args.orderid != null && args.orderid != undefined) {
        id = "some," + initialid
-       return handles.PTGetOrderList(ctx,initialid,id,args.orderid)
+       console.log("searching here")
+       return handles.PTGetOrderList(ctx,initialid,id,args.orderid,args.datetime)
     }  
     else if (args.state == 2){
        id = "some," + initialid 
-      return handles.GetHistoryOrders(ctx,initialid,id,args.orderid)
+      return handles.GetHistoryOrders(ctx,initialid,id,args.orderid,args.datetime)
     }
         else if (args.isregistered == 1) {
           id = "some,"+ initialid
-          return handles.PTGetOrderList(ctx,initialid,id,args.orderid)
+          return handles.PTGetOrderList(ctx,initialid,id,args.orderid,args.datetime)
         }
           else if (args.isregistered == 0) {
             id = "none," + initialid
-            return handles.PTGetOrderList(ctx,initialid,id,args.orderid)
+            return handles.PTGetOrderList(ctx,initialid,id,args.orderid,args.datetime)
           }
   },
 

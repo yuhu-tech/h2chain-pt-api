@@ -50,10 +50,42 @@ async function GetHistoryOrders(ctx,initialid,id){
             originorder['datetime'] = res.orderOrigins[i].datetime
             originorder['duration'] = res.orderOrigins[i].duration/3600
             originorder['mode'] = res.orderOrigins[i].mode
-            originorder['count'] = res.orderOrigins[i].count
-            originorder['male'] = res.orderOrigins[i].countMale
-            originorder['female'] = res.orderOrigins[i].count - res.orderOrigins[i].countMale
             originorder['orderstate'] = res.orderOrigins[i].status - 1
+            if (res.orderOrigins[i].orderAdviserModifies.length != 0){
+                if (res.orderOrigins[i].orderAdviserModifies[0].isFloat) {
+              //we judge if we will tranfer male and female number by the mode
+                  if (res.orderOrigins[i].mode == 0 ){
+                    originorder['male'] = 0
+                    originorder['female'] = 0
+                    originorder['count'] = Math.ceil(res.orderOrigins[i].count*1.05)
+                    } else {
+                        originorder['male'] = Math.ceil(res.orderOrigins[i].countMale*1.05)
+                        originorder['female'] = Math.ceil((res.orderOrigins[i].count - res.orderOrigins[i].countMale)*1.05)
+                        originorder['count'] = originorder['male'] + originorder['female']
+                          }
+                    } else {
+                        if (res.orderOrigins[i].mode == 0 ){
+                        originorder['male'] = 0
+                        originorder['female'] = 0
+                        originorder['count'] = res.orderOrigins[i].count
+                         } else {
+                        originorder['male'] = res.orderOrigins[i].countMale
+                        originorder['female'] = res.orderOrigins[i].count - res.orderOrigins[i].countMale
+                        originorder['count'] = originorder['male'] + originorder['female']
+                         }
+                          }
+              } else
+              {
+                        if (res.orderOrigins[i].mode == 0 ){
+                       originorder['male'] = 0
+                       originorder['female'] = 0
+                       originorder['count'] = res.orderOrigins[i].count
+                         } else {
+                       originorder['male'] = res.orderOrigins[i].countMale
+                       originorder['female'] = res.orderOrigins[i].count - res.orderOrigins[i].countMale
+                       originorder['count'] = originorder['male'] + originorder['female']
+                        }
+            }
 
             var postorder = {}
             if (res.orderOrigins[i].orderAdviserModifies.length != 0) {
@@ -99,10 +131,11 @@ async function GetHistoryOrders(ctx,initialid,id){
     }
 }
 
-async function PTGetOrderList(ctx,initialid,id,orderid) {
+async function PTGetOrderList(ctx,initialid,id,orderid,datetime) {
     try {
         var request = new messages.QueryRequest();
-        if (orderid != null && orderid != undefined ){request.setOrderid = orderid} 
+        if (orderid != null && orderid != undefined ){request.setOrderid(orderid)}
+        if (datetime != null && datetime!= undefined){request.setDate(datetime)}
         request.setPtid(id);//get pt id
         request.setStatus(2)
         var response = await queryOrder(request);
@@ -168,7 +201,7 @@ async function PTGetOrderList(ctx,initialid,id,orderid) {
             
             // 查询当前订单下该PT的状态
             // if we are searching what the pt has registered we have to search ptorderstate
-            if (id.indexOf("some") >= 0 ){
+            if (id.indexOf("some") >= 0 && orderid == undefined ){
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
