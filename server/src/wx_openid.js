@@ -10,7 +10,7 @@ const config = require('../conf/config')
 */
 
 function getOpenId(jsCode, num) {
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve, reject) => {
         var appid = ''
         var secret = ''
         if (num === 1) {
@@ -25,24 +25,24 @@ function getOpenId(jsCode, num) {
         } else {
             resolve()
         }
-    
+
         const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${jsCode}&grant_type=authorization_code`
-    
+
         request(url, function (error, response, body) {
-    
+
             if (!error && response.statusCode == 200) {
                 //console.log(body)
                 const openid = JSON.parse(body).openid;
                 resolve(openid)
-            }else{
+            } else {
                 reject(error)
             }
         });
     })
 }
- 
+
 function getSessionKey(jsCode, num) {
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve, reject) => {
         var appid = ''
         var secret = ''
         if (num === 1) {
@@ -57,21 +57,21 @@ function getSessionKey(jsCode, num) {
         } else {
             resolve()
         }
-    
+
         const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${jsCode}&grant_type=authorization_code`
-    
+
         request(url, function (error, response, body) {
-    
+
             if (!error && response.statusCode == 200) {
                 //console.log(body)
                 const openid = JSON.parse(body).session_key;
                 resolve(session_key)
-            }else{
+            } else {
                 reject(error)
             }
         });
     })
-} 
+}
 
 
 module.exports = {

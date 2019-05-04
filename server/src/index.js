@@ -15,5 +15,5 @@ const server = new GraphQLServer({
   })
 })
 //we add all prismas into ctx
-const options = {port:4002}
-server.start(options,({port}) => console.log('Server is running on http://localhost:4002'))
+const options = { port: 4002 }
+server.start(options, ({ port }) => console.log('Server is running on http://localhost:4002'))
