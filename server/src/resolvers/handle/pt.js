@@ -248,7 +248,6 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
 
             // 查询当前已报名的男女人数
             // 调用queryPTOfOrder()接口查询，某个订单下已报名PT的总人数
-            //TODO to get the male and female
             try {
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);
@@ -261,11 +260,13 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
                 for (var k = 0; k < obj['countyet']; k++) {
                     var ptid = response.array[0][k][0]
                     var personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: ptid } } })
-                    // to judge if there is a male or female
+                    // to judge if there is a male or female to aviod deleting sql leading some the pts who has already registered
+                    if (personalmsgs[0] != undefined){
                     if (personalmsgs[0].gender == 1) {
                         obj['maleyet'] = obj['maleyet'] + 1
                     } else {
                         obj['femaleyet'] == obj['femaleyet'] + 1
+                    }
                     }
                 }
                 // ptid  response.array[0][0][0]

@@ -9,6 +9,10 @@ const order = {
         var request = new messages.RegistryRequest();
         request.setOrderid(args.registerorder.orderid);        //报名订单的id
         const id = getUserId(ctx)
+        var personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: id } } })
+        if (personalmsgs[0].height == 0){
+        throw new Error('cannot register order without making personalmessages')
+        }
         request.setPtid(id);
         request.setAdviserid('001');
         var myDate = new Date();
