@@ -1,6 +1,6 @@
-const { getUserId, getSessionKey, getOpenId } = require('../utils')
-const handles = require('../resolvers/handle/pt')
-const WXBizDataCrypt = require('../WXBizDataCrypt')
+const { getUserId, getSessionKey, getOpenId } = require('../../utils/utils')
+const handles = require('../handle/pt')
+const WXBizDataCrypt = require('../../utils/WXBizDataCrypt')
 const config = require('../../conf/config')
 
 const query = {
