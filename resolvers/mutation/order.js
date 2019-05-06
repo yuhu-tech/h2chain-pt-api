@@ -3,7 +3,7 @@ const messages = require('../../grpc/mutation/mutation_pb');
 const services = require('../../grpc/mutation/mutation_grpc_pb');
 const grpc = require('grpc')
 const math = require('math')
-const client = new services.MutationClient('127.0.0.1:50051', grpc.credentials.createInsecure());
+const client = new services.MutationClient('119.3.106.151:50051', grpc.credentials.createInsecure());
 const order = {
     async registerorder(parent, args, ctx, info) {
         var request = new messages.RegistryRequest();
