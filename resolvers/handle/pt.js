@@ -26,7 +26,6 @@ function queryPt(request) {
 
 async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
     try {
-        console.log(orderid)
         var request = new messages.QueryRequest();
         if (orderid != null && orderid != undefined) { request.setOrderid(orderid) }
         request.setPtid(id);
@@ -112,7 +111,6 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
                 request.setOrderid(res.orderOrigins[i].id);
                 request.setPtid(initialid);
                 var response = await queryPt(request)
-                console.log(response.array[0][0])
                 obj['ptorderstate'] = response.array[0][0][7]
             } catch (error) {
                 throw error
@@ -125,7 +123,6 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
 
             historyorders.push(obj)
         }
-        console.log(historyorders)
         return historyorders
     } catch (error) {
         throw error
@@ -141,7 +138,6 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
         request.setPtid(id);//get pt id
         request.setStatus(2)
         var response = await queryOrder(request);
-        console.log(response)
         var res = JSON.parse(response.array[0])
         var orderList = []
         for (var i = 0; i < res.orderOrigins.length; i++) {

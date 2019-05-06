@@ -5,7 +5,7 @@ const { prismaHr } = require('../../h2chain-datamodel/hr/src/generated/prisma-cl
 const { prismaClient } = require('../../h2chain-datamodel/client/src/generated/prisma-client')
 
 const server = new GraphQLServer({
-  typeDefs: './server/schema.graphql',
+  typeDefs: './h2chain-pt-api/server/schema.graphql',
   resolvers,
   context: req => ({
     ...req,

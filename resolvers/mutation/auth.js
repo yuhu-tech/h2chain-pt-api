@@ -23,9 +23,7 @@ const auth = {
           user: { connect: { wechat: wechat } }
         }
       )
-      console.log(user)
     }
-    console.log(user)
     return {
       token: jwt.sign({ userId: user.id }, 'jwtsecret123'),
       user
@@ -41,7 +39,6 @@ const auth = {
         console.log("can't find this user")
       }
       else {
-        console.log(args.personalmsg)
         const returning = await ctx.prismaClient.updatePersonalmsg(
           {
             data: {

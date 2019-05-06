@@ -17,6 +17,7 @@
     "jsonwebtoken": "^8.5.0",
     "math": "0.0.3",
     "mysql": "^2.16.0",
-    "prisma-client-lib": "^1.29.1"
+    "prisma-client-lib": "^1.29.1",
+    "request": "^2.88.0"
   }
 }

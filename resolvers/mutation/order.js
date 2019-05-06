@@ -22,7 +22,6 @@ const order = {
         request.setPtstatus(args.registerorder.register);                       //PT状态，后端已经写好了第一次报名确认后，状态：1    
         request.setRegistrationchannel('Wechat');  //报名渠道,目前定义的通过字符串表示，后面可以用数字嘠射
         client.registryOrder(request, function (err, response) {
-            console.log(response.array)
         });
         var error = true
         return error
@@ -34,7 +33,6 @@ const order = {
             var request = new messages.ModifyPtRequest();
             request.setOrderid(args.orderid);       // OrderID 必传
             request.setPtid(id);                                   // 筛选条件，不用时传空
-            console.log(args.ptstatus)
             //we can only change the status of 4 to 3 in pt 
             request.setTargetstatus(args.ptstatus);                           // PT 目标状态 筛选条件，不同传 -1  
             request.setSourcestatus(4);                           // PT 原始状态  
