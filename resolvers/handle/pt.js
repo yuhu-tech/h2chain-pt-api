@@ -241,6 +241,7 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
             hotel['hotelphone'] = hotelProfiles[0].phone
             hotel['hotelintroduction'] = hotelProfiles[0].introduction
             hotel['hoteladdress'] = hotelProfiles[0].address
+            hotel['cover'] = hotelProfiles[0].cover
 
             var postorder = {}
             if (res.orderOrigins[i].orderAdviserModifies.length != 0) {

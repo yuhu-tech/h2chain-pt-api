@@ -30,6 +30,7 @@ type Hotel{
   hotelphone:String!
   hotelintroduction:String!
   hoteladdress:String!
+  cover:[String]
 }
 
 type Postorder{
