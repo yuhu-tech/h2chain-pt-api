@@ -1,16 +1,17 @@
 const { getUserId } = require('../../utils/utils')
 const messages = require('../../grpc/mutation/mutation_pb');
 const services = require('../../grpc/mutation/mutation_grpc_pb');
-const grpc = require('grpc')
-const math = require('math')
-const client = new services.MutationClient('119.3.106.151:50051', grpc.credentials.createInsecure());
+const grpc = require('grpc');
+const math = require('math');
+const config = require('../../conf/config');
+const client = new services.MutationClient(config.localip, grpc.credentials.createInsecure());
 const order = {
     async registerorder(parent, args, ctx, info) {
         var request = new messages.RegistryRequest();
         request.setOrderid(args.registerorder.orderid);        //报名订单的id
         const id = getUserId(ctx)
         var personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: id } } })
-        if (personalmsgs[0].height == 0){
+        if (personalmsgs[0].name == null || personalmsgs[0].name  == undefined || personalmsgs[0].name == '' ){
         throw new Error('cannot register order without making personalmessages')
         }
         request.setPtid(id);

@@ -35,7 +35,7 @@ const query = {
     }
   },
 
-  async getPhoneNumber(parent, args, ctx, info) {
+  async getphonenumber(parent, args, ctx, info) {
     var sessionKey = await getSessionKey(args.jscode, 3)
     var iv = args.iv
     appid = config.Appids.testPt
