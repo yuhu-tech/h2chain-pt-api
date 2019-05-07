@@ -29,6 +29,7 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
     try {
         var request = new messages.QueryRequest();
         if (orderid != null && orderid != undefined) { request.setOrderid(orderid) }
+        if (datetime != null && datetime != undefined) { request.setDate(datetime) }
         request.setPtid(id);
         request.setStatus(3)
         var response = await queryOrder(request);
@@ -249,20 +250,24 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
                 postorder['attention'] = res.orderOrigins[i].orderAdviserModifies[0].attention
             }
 
-            // 查询当前订单下该PT的状态
+            // 查询当前订单下该PT的状态(已报名)
             // if we are searching what the pt has registered we have to search ptorderstate
-            if (id.indexOf("some") >= 0 && orderid == undefined) {
+            if (id.indexOf("some") >= 0 ) {
                 try {
                     var request = new messages.QueryPTRequest();
                     request.setOrderid(res.orderOrigins[i].id);
                     request.setPtid(initialid);
+                    console.log(res.orderOrigins[i].id)
+                    console.log(initialid)
                     var response = await queryPt(request)
+                    console.log(response)
                     obj['ptorderstate'] = response.array[0][0][7]
                 } catch (error) {
                     throw error
                 }
             }
 
+            
             // 查询当前已报名的男女人数
             // 调用queryPTOfOrder()接口查询，某个订单下已报名PT的总人数
             try {
