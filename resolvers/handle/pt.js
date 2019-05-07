@@ -113,6 +113,26 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
                 request.setPtid(initialid);
                 var response = await queryPt(request)
                 obj['ptorderstate'] = response.array[0][0][7]
+
+            // we will retrieve every pts who has registered
+                var request = new messages.QueryPTRequest();
+                request.setOrderid(res.orderOrigins[i].id);
+                request.setPtstatus(13);
+                var response = await queryPt(request)
+                obj['countyet'] = response.array[0].length
+                if (obj['maleyet'] == undefined) { obj['maleyet'] = 0 }
+                if (obj['femaleyet'] == undefined) { obj['femaleyet'] = 0 }
+                for (var k = 0; k < obj['countyet']; k++) {
+                var ptid = response.array[0][k][0]
+                var personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: ptid } } })
+                // to judge if there is a male or female
+                if (JSON.parse(personalmsgs[0].gender) == 1) {
+                 obj['maleyet'] = obj['maleyet'] + 1
+                } else if (JSON.parse(personalmsgs[0].gender) == 2) {
+                 obj['femaleyet'] = obj['femaleyet'] + 1
+                }
+              }
+
             } catch (error) {
                 throw error
             }
