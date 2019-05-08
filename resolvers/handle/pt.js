@@ -105,7 +105,7 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
             hotel['hotelphone'] = hotelProfiles[0].phone
             hotel['hotelintroduction'] = hotelProfiles[0].introduction
             hotel['hoteladdress'] = hotelProfiles[0].address
-
+            hotel['cover'] = hotelProfiles[0].cover
 
             // 查询当前订单下该PT的状态
             try {
@@ -113,8 +113,9 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
                 request.setOrderid(res.orderOrigins[i].id);
                 request.setPtid(initialid);
                 var response = await queryPt(request)
+                if (response.array[0].length != 0){
                 obj['ptorderstate'] = response.array[0][0][7]
-
+                }
             // we will retrieve every pts who has registered
                 var request = new messages.QueryPTRequest();
                 request.setOrderid(res.orderOrigins[i].id);

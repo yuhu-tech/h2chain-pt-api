@@ -30,7 +30,7 @@ const query = {
     // 历史订单详情
     if (args.orderid != null && args.orderid != undefined && args.state == 2 ) {
       id = "some," + initialid
-      return handles.PTGetOrderList(ctx, initialid, id, args.orderid, args.datetime)
+      return handles.GetHistoryOrders(ctx, initialid, id, args.orderid, args.datetime)
     }
     // 历史订单列表
     if ((args.orderid == null || args.orderid == undefined) && args.state == 2) {
