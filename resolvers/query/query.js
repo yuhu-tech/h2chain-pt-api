@@ -42,11 +42,17 @@ const query = {
       id = "some," + initialid
       return handles.PTGetOrderList(ctx, initialid, id, args.orderid, args.datetime)
     }
-    // 为报名列表
+    // 未报名列表
     if (args.isregistered == 0) {
       id = "none," + initialid
       return handles.PTGetOrderList(ctx, initialid, id, args.orderid, args.datetime)
     }
+    // 分享点击（单纯查询）
+    if (args.orderid != null && args.orderid != undefined) {
+      id = "none," + initialid
+      return handles.PTGetOrderList(ctx, initialid, id, args.orderid, args.datetime)
+    }
+
   },
 
   async getphonenumber(parent, args, ctx, info) {

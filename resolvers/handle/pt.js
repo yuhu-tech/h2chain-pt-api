@@ -258,11 +258,11 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
                     var request = new messages.QueryPTRequest();
                     request.setOrderid(res.orderOrigins[i].id);
                     request.setPtid(initialid);
-                    console.log(res.orderOrigins[i].id)
-                    console.log(initialid)
                     var response = await queryPt(request)
-                    console.log(response)
+                    //防止查到none的情况，加上保护，此类情况下，会出现不关联的情况
+                    if (response.array[0].length != 0) {
                     obj['ptorderstate'] = response.array[0][0][7]
+                    }
                 } catch (error) {
                     throw error
                 }
