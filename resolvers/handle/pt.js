@@ -36,8 +36,30 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
         var res = JSON.parse(response.array[0])
         var historyorders = []
         for (var i = 0; i < res.orderOrigins.length; i++) {
-            var obj = {}
-            var adviser = {}
+          var obj = {}
+          //we also need modified orders here in searching history
+          var modifiedorder = []
+          if (res.orderOrigins[i].orderHotelModifies.length != 0){
+          for (var j = 0; j < res.orderOrigins[i].orderHotelModifies.length; j++) {
+          var modifiedorderObj = {}
+          modifiedorderObj['orderid'] = res.orderOrigins[i].id
+          modifiedorderObj['changeddatetime'] = res.orderOrigins[i].orderHotelModifies[j].dateTime
+          modifiedorderObj['changedduration'] = res.orderOrigins[i].orderHotelModifies[j].duration / 3600
+          modifiedorderObj['changedmode'] = res.orderOrigins[i].orderHotelModifies[j].mode
+          modifiedorderObj['changedcount'] = res.orderOrigins[i].orderHotelModifies[j].count
+          // there are two conditions: 1) if changed mode = 0 ,we set changed male and change female = 0 else we will
+          // set the female  = count - male
+          if (modifiedorderObj['changedmode'] == 0) {
+            modifiedorderObj['changedmale'] = 0
+            modifiedorderObj['changedfemale'] = 0
+          } else {
+            modifiedorderObj['changedmale'] = res.orderOrigins[i].orderHotelModifies[j].countMale
+            modifiedorderObj['changedfemale'] = res.orderOrigins[i].orderHotelModifies[j].count - res.orderOrigins[i].orderHotelModifies[j].countMale
+          }
+          modifiedorder.push(modifiedorderObj)
+        }
+      }
+          var adviser = {}
             //finished to retrieve adviser message to show to pts
             var adviserId = res.orderOrigins[i].adviserId
             var advisers = await ctx.prismaHr.users({ where: { id: adviserId } })
@@ -143,7 +165,8 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
             obj['originorder'] = originorder
             obj['postorder'] = postorder
             obj['hotel'] = hotel
-
+            obj['modifiedorder'] = modifiedorder
+            
             historyorders.push(obj)
         }
         return historyorders
@@ -167,19 +190,27 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
             var obj = {}
 
             var modifiedorder = []
-            if (res.orderOrigins[i].orderHotelModifies.length != 0) {
-                for (var j = 0; j < res.orderOrigins[i].orderHotelModifies.length; j++) {
-                    var modifiedorderObj = {}
-                    modifiedorderObj['orderid'] = res.orderOrigins[i].id
-                    modifiedorderObj['changeddatetime'] = res.orderOrigins[i].orderHotelModifies[j].dateTime
-                    modifiedorderObj['changedduration'] = res.orderOrigins[i].orderHotelModifies[j].duration / 3600
-                    modifiedorderObj['changedmode'] = res.orderOrigins[i].orderHotelModifies[j].mode
-                    modifiedorderObj['changedcount'] = res.orderOrigins[i].orderHotelModifies[j].count
-                    modifiedorderObj['changedmale'] = res.orderOrigins[i].orderHotelModifies[j].countMale
-                    modifiedorderObj['changedfemale'] = res.orderOrigins[i].orderHotelModifies[j].count - res.orderOrigins[i].orderHotelModifies[j].countMale
-                    modifiedorder.push(modifiedorderObj)
-                }
-            }
+
+        if (res.orderOrigins[i].orderHotelModifies.length != 0) {
+          for (var j = 0; j < res.orderOrigins[i].orderHotelModifies.length; j++) {
+          var modifiedorderObj = {}
+          modifiedorderObj['orderid'] = res.orderOrigins[i].id
+          modifiedorderObj['changeddatetime'] = res.orderOrigins[i].orderHotelModifies[j].dateTime
+          modifiedorderObj['changedduration'] = res.orderOrigins[i].orderHotelModifies[j].duration / 3600
+          modifiedorderObj['changedmode'] = res.orderOrigins[i].orderHotelModifies[j].mode
+          modifiedorderObj['changedcount'] = res.orderOrigins[i].orderHotelModifies[j].count
+          // there are two conditions: 1) if changed mode = 0 ,we set changed male and change female = 0 else we will
+          // set the female  = count - male
+          if (modifiedorderObj['changedmode'] == 0) {
+            modifiedorderObj['changedmale'] = 0
+            modifiedorderObj['changedfemale'] = 0
+          } else {
+            modifiedorderObj['changedmale'] = res.orderOrigins[i].orderHotelModifies[j].countMale
+            modifiedorderObj['changedfemale'] = res.orderOrigins[i].orderHotelModifies[j].count - res.orderOrigins[i].orderHotelModifies[j].countMale
+          }
+          modifiedorder.push(modifiedorderObj)
+        }
+      }
 
             var originorder = {}
             originorder['orderid'] = res.orderOrigins[i].id
@@ -269,7 +300,6 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
                 }
             }
 
-            
             // 查询当前已报名的男女人数
             // 调用queryPTOfOrder()接口查询，某个订单下已报名PT的总人数
             try {
