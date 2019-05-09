@@ -9,7 +9,6 @@ lerna-debug.log*
 # tmp files
 *.swp
 *.swo
-.DS_Store
 
 # secrets
 config.js
