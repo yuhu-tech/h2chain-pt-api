@@ -313,13 +313,11 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
                 for (var k = 0; k < obj['countyet']; k++) {
                     var ptid = response.array[0][k][0]
                     var personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: ptid } } })
-                    // to judge if there is a male or female to aviod deleting sql leading some the pts who has already registered
-                    if (personalmsgs[0] != undefined) {
-                        if (personalmsgs[0].gender == 1) {
-                            obj['maleyet'] = obj['maleyet'] + 1
-                        } else {
-                            obj['femaleyet'] == obj['femaleyet'] + 1
-                        }
+                    // to judge if there is a male or female
+                    if (JSON.parse(personalmsgs[0].gender) == 1) {
+                        obj['maleyet'] = obj['maleyet'] + 1
+                    } else if (JSON.parse(personalmsgs[0].gender == 2)) {
+                        obj['femaleyet'] = obj['femaleyet'] + 1
                     }
                 }
                 // ptid  response.array[0][0][0]
