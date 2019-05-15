@@ -23,18 +23,14 @@ const order = {
         request.setSignintime(-1);                          //签到时间
         request.setPtstatus(args.registerorder.register);                       //PT状态，后端已经写好了第一次报名确认后，状态：1    
         request.setRegistrationchannel('Wechat');  //报名渠道,目前定义的通过字符串表示，后面可以用数字嘠射
-        client.registryOrder(request, function (err, response) {
-        });
-
+        client.registryOrder(request, function (err, response) { console.log("报名成功")});
         // set formid which is created when pt registry order
-        var userId = ''
-        var orderId = ''
-        var formId = ''
+        var userId = id
+        var orderId = args.registerorder.orderid
+        var formId = args.formid
         var setRes = await formid.setFormId(userId, orderId, formId)
         console.log('set formid after registrying :', setRes)
-
-        var error = true
-        return error
+        return true
     },
 
     async modifyptoforder(parent, args, ctx, info) {
@@ -50,9 +46,9 @@ const order = {
             })
 
             // set formid which is created when pt registry order
-            var userId = ''
-            var orderId = ''
-            var formId = ''
+            var userId = id
+            var orderId = args.orderid
+            var formId = args.formId
             var setRes = await formid.setFormId(userId, orderId, formId)
             console.log('set formid after registrying :', setRes)
 
