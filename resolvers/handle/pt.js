@@ -120,7 +120,7 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
 
             var hotel = {}
             //finished to retrieve adviser message to show to pts
-            var hotelId = res.orderOrigins[i].hotelID
+            var hotelId = res.orderOrigins[i].hotelId
             var hotels = await ctx.prismaHotel.users({ where: { id: hotelId } })
             var hotelProfiles = await ctx.prismaHotel.profiles({ where: { user: { id: hotelId } } })
             hotel['hotelname'] = hotelProfiles[0].name
@@ -265,7 +265,7 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
 
             var hotel = {}
             //FINISHED to retrieve hotel messages to show to pts
-            var hotelId = res.orderOrigins[i].hotelID
+            var hotelId = res.orderOrigins[i].hotelId
             var hotels = await ctx.prismaHotel.users({ where: { id: hotelId } })
             var hotelProfiles = await ctx.prismaHotel.profiles({ where: { user: { id: hotelId } } })
             hotel['hotelname'] = hotelProfiles[0].name

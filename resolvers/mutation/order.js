@@ -48,7 +48,7 @@ const order = {
             // set formid which is created when pt registry order
             var userId = id
             var orderId = args.orderid
-            var formId = args.formId
+            var formId = args.formid
             var setRes = await formid.setFormId(userId, orderId, formId)
             console.log('set formid after registrying :', setRes)
 

@@ -74,7 +74,7 @@ type Mutation {
   createpersonalmsg(personalmsg:InputPersonalmsg!):UserPayload
   modifypersonalmsg(personalmsg:InputPersonalmsg!):Boolean!
   updatewechat:Boolean!
-  modifyptoforder(orderid:String!,ptstatus:Int!):Boolean!
+  modifyptoforder(orderid:String!,ptstatus:Int!,formid:String!):Boolean!
 }
 
 
