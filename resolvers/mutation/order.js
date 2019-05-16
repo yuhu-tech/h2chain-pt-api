@@ -39,7 +39,7 @@ const order = {
             var request = new messages.ModifyPtRequest();
             request.setOrderid(args.orderid);       // OrderID 必传
             request.setPtid(id);                                   // 筛选条件，不用时传空
-            //we can only change the status of 4 to 3 in pt 
+            //we can only change the status of 4 to 3 in pt
             request.setTargetstatus(args.ptstatus);               // PT 目标状态 筛选条件，不同传 -1  
             request.setSourcestatus(4);                           // PT 原始状态  
             client.modifyPTOfOrder(request, function (err, response) {
@@ -50,8 +50,7 @@ const order = {
             var orderId = args.orderid
             var formId = args.formid
             var setRes = await formid.setFormId(userId, orderId, formId)
-            console.log('set formid after registrying :', setRes)
-
+            console.log('set formid after re-registrying :', setRes)
             return true
         } catch (error) {
             throw (error)
