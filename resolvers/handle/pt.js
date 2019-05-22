@@ -184,6 +184,7 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
         request.setStatus(2)
         var response = await queryOrder(request);
         var res = JSON.parse(response.array[0])
+        var orderList = []
         for (var i = 0; i < res.orderOrigins.length; i++) {
             var obj = {}
 
