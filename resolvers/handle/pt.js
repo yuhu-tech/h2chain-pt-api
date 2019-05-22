@@ -184,7 +184,9 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
         request.setStatus(2)
         var response = await queryOrder(request);
         var res = JSON.parse(response.array[0])
-        var orderList = []
+        if (res.orderOrigins.length == 0) {
+          throw new Error ("cannot find order, is the order closed?")
+        }
         for (var i = 0; i < res.orderOrigins.length; i++) {
             var obj = {}
 
