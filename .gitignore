@@ -12,6 +12,7 @@ lerna-debug.log*
 
 # secrets
 config.js
+.DS_Store
 
 # ali token certs files
 certs
