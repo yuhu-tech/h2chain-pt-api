@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@alipay/mychain": "file:alipay-mychain-0.2.27.tgz",
     "bcryptjs": "^2.4.3",
     "express-jwt": "^5.3.1",
     "google-protobuf": "^3.8.0-rc.1",

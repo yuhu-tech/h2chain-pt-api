@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { getUserId, getOpenId } = require('../../utils/utils')
+const { CreateAccount }  = require('../../token/ali_token/handle/mutation/mutation')
 
 const auth = {
   async login(parent, args, ctx, info) {
@@ -12,7 +13,7 @@ const auth = {
     if (user == undefined || user == null ) {
       console.log("can't find this user, registering...")
       var user = await ctx.prismaClient.createUser({ wechat: wechat })
-      const personalmsg = await ctx.prismaClient.createPersonalmsg(
+      var personalmsg = await ctx.prismaClient.createPersonalmsg(
         {
           name: "",
           phonenumber: "",
@@ -21,9 +22,24 @@ const auth = {
           height: 0,
           weight: 0,
           status: 2,
+          ptadd:"0xsdjawrhuowajfweradnakjhfdasj22dawed",
+          privatekey:"mocked privatekey",
+          publickey:"mocked publickey",
           user: { connect: { wechat: wechat } }
         }
       )
+      //为用户创建钱包
+      keys =  await CreateAccount(personalmsg.id)
+      var updatekeys = await ctx.prismaClient.updatePersonalmsg(
+        {
+          data: {
+            privatekey:keys.privatekey,
+            publickey:keys.publickey,
+          },
+          where: { id : personalmsg.id }
+        }
+      )
+      console.log(keys)
     }
     return {
       token: jwt.sign({ userId: user.id }, 'jwtsecret123'),
