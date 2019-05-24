@@ -2,26 +2,63 @@ type Query {
   me: User!
   getphonenumber(encryptedData:String!,iv:String!,jscode:String!):String
   search(orderid: String,state:Int,datetime:Int,isregistered:Int):[Order]
+  mywallet: Walletmsg
+  searchhash(txhash:String!):BcPayload
+}
+
+type BcPayload{
+  chainname:String
+  hotelcer: String
+  hoteladdr: String
+  hotelhrname: String
+  hotelname: String
+  advisercer: String
+  adviseraddr: String
+  advisername: String
+  adviserhrname: String
+  ptcer: String
+  ptaddr: String
+  ptname: String
+  contractaddress: String
+  blocknumber: Int
+  hash:String
+  occupation: String
+  datetime: Int
+  isrefused: Int
+  # to be continued
+}
+
+type Walletmsg{
+  walletid:String
+  balance:Int!
+  transactions:[Txs]
+}
+
+type Tx{
+  timestamp:Int!
+  reason:String!
+  direction:String
+  value:String!
 }
 
 type Adviser{
-name:String!
-phone:String!
-companyname:String!
+  name:String!
+  phone:String!
+  companyname:String!
 }
 
 type Order {
-adviser: Adviser!
-hotel:Hotel!
-state : Int
-originorder:Originorder!
-modifiedorder:[Modifiedorder]
-maleyet:Int
-femaleyet:Int
-countyet:Int
-postorder:Postorder
-ptorderstate: Int
-#1 == registered and 2 == refused and 3 == re-registered and 4 == to-registered and 5 == give up
+  adviser: Adviser!
+  hotel:Hotel!
+  state : Int
+  originorder:Originorder!
+  modifiedorder:[Modifiedorder]
+  maleyet:Int
+  femaleyet:Int
+  countyet:Int
+  postorder:Postorder
+  ptorderstate: Int
+  #1 == registered and 2 == refused and 3 == re-registered and 4 == to-registered and 5 == give up
 }
 
 type Hotel{
