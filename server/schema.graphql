@@ -2,7 +2,7 @@ type Query {
   me: User!
   getphonenumber(encryptedData:String!,iv:String!,jscode:String!):String
   search(orderid: String,state:Int,datetime:Int,isregistered:Int):[Order]
-  mywallet(skip:Int!): Walletmsg
+  mywallet(skip:Int!,time:Int): Walletmsg
   searchhash(txhash:String!):BcPayload
 }
 
@@ -48,6 +48,7 @@ type Adviser{
 }
 
 type Order {
+  hash : String
   adviser: Adviser!
   hotel:Hotel!
   state : Int

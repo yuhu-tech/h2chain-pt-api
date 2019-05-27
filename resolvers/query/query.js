@@ -23,7 +23,7 @@ const query = {
     console.log(personalmsgs)
     if (args.time == undefined)
     {
-    var date1 = 0
+    var date1 = 1
     var date2 = math.round(Date.now()/1000)
     } else
     {
@@ -32,8 +32,11 @@ const query = {
     }
     if (personalmsgs.length != 0 && personalmsgs[0].phonenumber != undefined && personalmsgs[0].phonenumber != null){
       var balance = await QueryBalanceOf(personalmsgs[0].ptadd)
-      var txes =  await ctx.prismaHotel.txes({where:{AND:[{OR:[{from:personalmsgs[0].ptadd},{to:personalmsgs[0].ptadd}]},{timestamp_lt:date2},{timestamp_gt:date1}]},first:10,skip:args.skip,orderBy:timestamp_DESC})
-      //TOOD  增加limit skip
+      //var txes =  await ctx.prismaHotel.txes(`{where:{AND:[{OR:[{from:${personalmsgs[0].ptadd}},{to:${personalmsgs[0].ptadd}}]},{timestamp_lt:${date2}},{timestamp_gt:${date1}}]}orderBy:timestamp_DESC,first:10,skip:${args.skip}}`)
+      var txes =  await ctx.prismaHotel.txes({where:{AND:[{OR:[{from:personalmsgs[0].ptadd},{to:personalmsgs[0].ptadd}]},{timestamp_lt:date2},{timestamp_gt:date1}]},first:10,skip:args.skip})
+      //var txes =  await ctx.prismaHotel.txes({where: `{AND:[{OR:[{from:${personalmsgs[0].ptadd}},{to:${personalmsgs[0].ptadd}}]},{timestamp_lt:${date2}},{timestamp_gt:${date1}}]}orderBy:timestamp_DESC`,first:10, skip:args.skip})
+      
+    
       for (i=0;  i<txes.length; i++)
       {
         if (txes[i].from ==  personalmsgs[0].ptadd){
@@ -109,6 +112,7 @@ const query = {
     var contracts = await ctx.prismaHotel.contracts({where:{hash:args.txhash}})
     res['blocknumber'] = contracts[0].blocknumber
     res['contractaddress'] = '0x3a758e6e367a783c7e845a91421b6def99972445bcf127bc258c145704953dc6'
+    res['hash'] = args.txhash
     return res
   }
 }
