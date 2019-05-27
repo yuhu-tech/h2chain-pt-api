@@ -100,7 +100,7 @@ const auth = {
              reason: "完善个人信息赠送",
              timestamp: math.round(Date.now()/1000)
            })
-          console.log(personalmsg)
+          console.log("赠送成功")
          }
         }
       }
