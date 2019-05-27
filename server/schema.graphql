@@ -2,7 +2,7 @@ type Query {
   me: User!
   getphonenumber(encryptedData:String!,iv:String!,jscode:String!):String
   search(orderid: String,state:Int,datetime:Int,isregistered:Int):[Order]
-  mywallet: Walletmsg
+  mywallet(skip:Int!): Walletmsg
   searchhash(txhash:String!):BcPayload
 }
 
@@ -29,15 +29,15 @@ type BcPayload{
 }
 
 type Walletmsg{
-  walletid:String
-  balance:Int!
-  transactions:[Txs]
+  ptaddr:String
+  balance:Int
+  transactions:[Tx]
 }
 
 type Tx{
-  timestamp:Int!
+  timestamp:Int
   reason:String!
-  direction:String
+  income:Int
   value:String!
 }
 

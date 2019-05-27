@@ -2,7 +2,7 @@ const { getUserId, getSessionKey, getOpenId } = require('../../utils/utils')
 const handles = require('../handle/pt')
 const WXBizDataCrypt = require('../../utils/WXBizDataCrypt')
 const config = require('../../conf/config')
-const { QueryTransaction } = require('../../token/ali_token/handle/query/query')
+const { QueryTransaction,QueryBalanceOf } = require('../../token/ali_token/handle/query/query')
 const utils = require('../../token/ali_token/utils/utils')
 
 const query = {
@@ -18,19 +18,28 @@ const query = {
   },
 
   async mywallet(parent,args,ctx,info){
-    const id = getUserId(ctx)
-    const personalmsgs = await ctx.prismaClient.Personalmsgs({where:{user:{id:id}}})
-    if (personalmsgs[0].phonenumber != undefined && personalmsgs[0].phonenumber != null){
-      const veryid = personalmsgs[0].veryid
-      var balances = await ctx.prismaClient.Balances({ where : { veryid : veryid }})
-      var balance = balances[0]
-      var Txs =  await ctx.prismaClient.Txs({where:{to:veryid}})
+    var id = getUserId(ctx)
+    const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
+    console.log(personalmsgs)
+    if (personalmsgs.length != 0 && personalmsgs[0].phonenumber != undefined && personalmsgs[0].phonenumber != null){
+      var balance = await QueryBalanceOf(personalmsgs[0].ptadd)
+      var txes =  await ctx.prismaHotel.txes({where:{OR:[{from:personalmsgs[0].ptadd},{to:personalmsgs[0].ptadd}]},first:10,skip:args.skip})
+      //TOOD  增加limit skip
+      for (i=0;  i<txes.length; i++)
+      {
+        if (txes[i].from ==  personalmsgs[0].ptadd){
+          txes[i].income = 0
+        } else {
+          txes[i].income = 1
+        }
+      }
       return {
-        balance:balance,
-        transactions:Txses
+        ptaddr : personalmsgs[0].ptadd,
+        balance: balance.balance ,
+        transactions:txes
       }
     } else {
-        throw error ("cannot query your wallet until binding your phonenumber")
+        throw new Error ("cannot query your wallet until binding your phonenumber")
     }
   },
 
