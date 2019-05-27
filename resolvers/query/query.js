@@ -2,6 +2,8 @@ const { getUserId, getSessionKey, getOpenId } = require('../../utils/utils')
 const handles = require('../handle/pt')
 const WXBizDataCrypt = require('../../utils/WXBizDataCrypt')
 const config = require('../../conf/config')
+const { QueryTransaction,QueryBalanceOf } = require('../../token/ali_token/handle/query/query')
+const utils = require('../../token/ali_token/utils/utils')
 
 const query = {
   async me(parent, args, ctx, info) {
@@ -13,6 +15,32 @@ const query = {
       personalmsg: personalmsgs[0]
     }
     return (result)
+  },
+
+  async mywallet(parent,args,ctx,info){
+    var id = getUserId(ctx)
+    const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
+    console.log(personalmsgs)
+    if (personalmsgs.length != 0 && personalmsgs[0].phonenumber != undefined && personalmsgs[0].phonenumber != null){
+      var balance = await QueryBalanceOf(personalmsgs[0].ptadd)
+      var txes =  await ctx.prismaHotel.txes({where:{OR:[{from:personalmsgs[0].ptadd},{to:personalmsgs[0].ptadd}]},first:10,skip:args.skip})
+      //TOOD  增加limit skip
+      for (i=0;  i<txes.length; i++)
+      {
+        if (txes[i].from ==  personalmsgs[0].ptadd){
+          txes[i].income = 0
+        } else {
+          txes[i].income = 1
+        }
+      }
+      return {
+        ptaddr : personalmsgs[0].ptadd,
+        balance: balance.balance ,
+        transactions:txes
+      }
+    } else {
+        throw new Error ("cannot query your wallet until binding your phonenumber")
+    }
   },
 
   async search(parent, args, ctx, info) {
@@ -62,6 +90,17 @@ const query = {
     var pc = new WXBizDataCrypt(appid, sessionKey)
     var data = pc.decryptData(args.encryptedData, iv)
     return data.phoneNumber
+  },
+
+   async searchhash(parent,args,ctx,info) {
+    var result  = await QueryTransaction(args.txhash)
+    var res = await utils.Hex2Str(result.originData)
+    var res = JSON.parse(res.str)
+    res['chainname'] = '蚂蚁区块链h2chain项目'
+    var contracts = await ctx.prismaHotel.contracts({where:{hash:args.txhash}})
+    res['blocknumber'] = contracts[0].blocknumber
+    res['contractaddress'] = '0x3a758e6e367a783c7e845a91421b6def99972445bcf127bc258c145704953dc6'
+    return res
   }
 }
 

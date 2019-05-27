@@ -7,7 +7,6 @@ const path = require('path')
 const accountKey = fs.readFileSync(path.resolve(__dirname, "../../certs/user.pem"), { encoding: "utf8" })
 const accountPassword = config.accountPassword  //需要替换为自定义的 user.pem 密码
 const keyInfo = Chain.utils.getKeyInfo(accountKey, accountPassword)
-
 const passphrase = config.passphrase // client.key 密码
 
 //配置选项
