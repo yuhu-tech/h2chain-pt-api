@@ -4,7 +4,7 @@ const WXBizDataCrypt = require('../../utils/WXBizDataCrypt')
 const config = require('../../conf/config')
 const { QueryTransaction,QueryBalanceOf } = require('../../token/ali_token/handle/query/query')
 const utils = require('../../token/ali_token/utils/utils')
-
+const math = require('math')
 const query = {
   async me(parent, args, ctx, info) {
     const id = getUserId(ctx)
@@ -21,9 +21,18 @@ const query = {
     var id = getUserId(ctx)
     const personalmsgs = await ctx.prismaClient.personalmsgs({where:{user:{id:id}}})
     console.log(personalmsgs)
+    if (args.time == undefined)
+    {
+    var date1 = 0
+    var date2 = math.round(Date.now()/1000)
+    } else
+    {
+    var date1 = args.time-(args.time + 8*3600)%86400
+    var date2 = args.time-(args.time + 8*3600)%86400 + 86399
+    }
     if (personalmsgs.length != 0 && personalmsgs[0].phonenumber != undefined && personalmsgs[0].phonenumber != null){
       var balance = await QueryBalanceOf(personalmsgs[0].ptadd)
-      var txes =  await ctx.prismaHotel.txes({where:{OR:[{from:personalmsgs[0].ptadd},{to:personalmsgs[0].ptadd}]},first:10,skip:args.skip})
+      var txes =  await ctx.prismaHotel.txes({where:{AND:[{OR:[{from:personalmsgs[0].ptadd},{to:personalmsgs[0].ptadd}]},{timestamp_lt:date2},{timestamp_gt:date1}]},first:10,skip:args.skip,orderBy:timestamp_DESC})
       //TOOD  增加limit skip
       for (i=0;  i<txes.length; i++)
       {
