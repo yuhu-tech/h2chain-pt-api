@@ -64,8 +64,7 @@ const auth = {
     const personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: id } } })
     //判断是否是第一次更新个人信息
     var flag = 0
-    console.log(personalmsgs[0].name)
-    if ( personalmsgs[0].name == null || personalmsgs[0].name == undefined) {
+    if ( personalmsgs[0].name == '') {
       flag = 1
     }
 
@@ -89,7 +88,6 @@ const auth = {
           }
         )
         //开始赠送
-        console.log(flag)
         if (flag == 1){
            result = await Issue(personalmsgs[0].ptadd ,200)
            console.log(result)
@@ -102,7 +100,7 @@ const auth = {
              reason: "完善个人信息赠送",
              timestamp: math.round(Date.now()/1000)
            })
-          console.log(personalmsg)
+          console.log("赠送成功")
          }
         }
       }

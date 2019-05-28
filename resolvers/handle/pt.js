@@ -166,11 +166,10 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
             obj['postorder'] = postorder
             obj['hotel'] = hotel
             obj['modifiedorder'] = modifiedorder
-            var contracts = ctx.prismaHotel.contracts({where:{AND:[{orderid:res.orderOrigins[i].id},{ptid:ptid}]}})
+            var contracts = await ctx.prismaHotel.contracts({where:{AND:[{orderid:res.orderOrigins[i].id},{ptid:ptid}]}})
+            if (contracts.length != 0){
             obj['hash'] = contracts[0].hash
-
-
-
+            }
             historyorders.push(obj)
         }
         return historyorders
