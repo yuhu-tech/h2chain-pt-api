@@ -34,8 +34,8 @@ const auth = {
       var updatekeys = await ctx.prismaClient.updatePersonalmsg(
         {
           data: {
-            privatekey:keys.privatekey,
-            publickey:keys.publickey,
+            privatekey:keys.privateKey,
+            publickey:keys.publicKey,
           },
           where: { id : personalmsg.id }
         }
