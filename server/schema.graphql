@@ -126,6 +126,8 @@ type UserPayload{
 input InputRegisterorder{
   orderid:String!
   register:Int!
+  inviterid:String
+  type:Int!
   #register == 1 means attend, register == 2 means cancel 3 == re-registered 4 == not go by himself
 }
 

@@ -22,9 +22,8 @@ const order = {
         request.setApplytime(math.round(now));                       //报名时间，精确到秒
         request.setSignintime(-1);                          //签到时间
         request.setPtstatus(args.registerorder.register);                       //PT状态，后端已经写好了第一次报名确认后，状态：1    
-        request.setRegistrationchannel('Wechat');  //报名渠道,目前定义的通过字符串表示，后面可以用数字嘠射
-        request.setInviterid(args.inviterid); //设置推荐人渠道
-        request.setType(args.type); //设置报名类型 1:自有报名 2:顾问分享报名 3:代理分享报名
+        request.setInviterid(args.registerorder.inviterid); //设置推荐人渠道
+        request.setType(args.registerorder.type); //设置报名类型 1:自有报名 2:顾问分享报名 3:代理分享报名
         client.registryOrder(request, function (err, response) { console.log("报名成功")});
         // set formid which is created when pt registry order
         var userId = id
