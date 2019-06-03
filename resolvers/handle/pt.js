@@ -166,9 +166,9 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
             obj['postorder'] = postorder
             obj['hotel'] = hotel
             obj['modifiedorder'] = modifiedorder
-            var contracts = await ctx.prismaHotel.contracts({where:{AND:[{orderid:res.orderOrigins[i].id},{ptid:ptid}]}})
-            if (contracts.length != 0){
-            obj['hash'] = contracts[0].hash
+            var contracts = await ctx.prismaHotel.contracts({ where: { AND: [{ orderid: res.orderOrigins[i].id }, { ptid: ptid }] } })
+            if (contracts.length != 0) {
+                obj['hash'] = contracts[0].hash
             }
             historyorders.push(obj)
         }
@@ -287,20 +287,20 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
 
             // 查询当前订单下该PT的状态(已报名)
             // if we are searching what the pt has registered we have to search ptorderstate
-            if (id.indexOf("some") >= 0) {
-                try {
-                    var request = new messages.QueryPTRequest();
-                    request.setOrderid(res.orderOrigins[i].id);
-                    request.setPtid(initialid);
-                    var response = await queryPt(request)
-                    //防止查到none的情况，加上保护，此类情况下，会出现不关联的情况
-                    if (response.array[0].length != 0) {
-                        obj['ptorderstate'] = response.array[0][0][7]
-                    }
-                } catch (error) {
-                    throw error
+            //if (id.indexOf("some") >= 0) {
+            try {
+                var request = new messages.QueryPTRequest();
+                request.setOrderid(res.orderOrigins[i].id);
+                request.setPtid(initialid);
+                var response = await queryPt(request)
+                //防止查到none的情况，加上保护，此类情况下，会出现不关联的情况
+                if (response.array[0][0]) {
+                    obj['ptorderstate'] = response.array[0][0][7]
                 }
+            } catch (error) {
+                throw error
             }
+            //}
 
             // 查询当前已报名的男女人数
             // 调用queryPTOfOrder()接口查询，某个订单下已报名PT的总人数
