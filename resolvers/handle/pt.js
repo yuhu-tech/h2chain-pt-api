@@ -128,6 +128,8 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
             hotel['hotelintroduction'] = hotelProfiles[0].introduction
             hotel['hoteladdress'] = hotelProfiles[0].address
             hotel['cover'] = hotelProfiles[0].cover
+            hotel['longitude'] = hotelProfiles[0].longitude
+            hotel['latitude'] = hotelProfiles[0].latitude
 
             // 查询当前订单下该PT的状态
             try {
