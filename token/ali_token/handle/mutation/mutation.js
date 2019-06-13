@@ -41,7 +41,7 @@ function Issue(to, value) {
         console.log(data)
       } else {
         var txhash = data.txhash
-        resolve({ txhash,output })
+        resolve({ txhash, output })
       }
     })
   })
@@ -71,7 +71,7 @@ function Transfer(from, publicKey, privateKey, to, value) {
         console.log(data)
       } else {
         var txhash = data.txhash
-        resolve({ txhash,output })
+        resolve({ txhash, output })
       }
     })
   })
@@ -90,7 +90,8 @@ function NativeDepositData(hashData) {
         reject(Error('native deposit data failed', err))
       } else {
         var txhash = data.txhash
-        resolve({txhash})
+        var blockNumber = data.block_number
+        resolve({ txhash, blockNumber })
       }
     })
   })
