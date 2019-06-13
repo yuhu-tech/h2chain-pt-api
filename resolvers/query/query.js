@@ -98,7 +98,7 @@ const query = {
   async getphonenumber(parent, args, ctx, info) {
     var sessionKey = await getSessionKey(args.jscode, 3)
     var iv = args.iv
-    appid = config.Appids.testPt
+    appid = config.Appids.pt
     var pc = new WXBizDataCrypt(appid, sessionKey)
     var data = pc.decryptData(args.encryptedData, iv)
     return data.phoneNumber
