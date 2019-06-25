@@ -189,9 +189,6 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
         request.setStatus(2)
         var response = await queryOrder(request);
         var res = JSON.parse(response.array[0])
-        if (!res.orderOrigins[0]){
-            throw new Error("cannot find this order, is it closed?")
-        }
         var orderList = []
         for (var i = 0; i < res.orderOrigins.length; i++) {
             var obj = {}
@@ -276,6 +273,7 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
             var hotelId = res.orderOrigins[i].hotelId
             var hotels = await ctx.prismaHotel.users({ where: { id: hotelId } })
             var hotelProfiles = await ctx.prismaHotel.profiles({ where: { user: { id: hotelId } } })
+            console.log(hotelProfiles[0])
             hotel['hotelname'] = hotelProfiles[0].name
             hotel['hotelphone'] = hotelProfiles[0].phone
             hotel['hotelintroduction'] = hotelProfiles[0].introduction

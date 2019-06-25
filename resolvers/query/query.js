@@ -90,9 +90,15 @@ const query = {
     // 分享点击（单纯查询）
     if (args.orderid != null && args.orderid != undefined) {
       id = "none," + initialid
-      return handles.PTGetOrderList(ctx, initialid, id, args.orderid, args.datetime)
+      var todo = await handles.PTGetOrderList(ctx,initialid,id,args.orderid,args.datetime)
+      id = "some," + initialid
+      var doing = await handles.PTGetOrderList(ctx,initialid,id,args.orderid,args.datetime)
+      Array.prototype.push.apply(todo, doing)
+      if (!todo.length){
+        throw new Error("cannot find this order, is it closed?")
+      }
+      return todo
     }
-
   },
 
   async getphonenumber(parent, args, ctx, info) {

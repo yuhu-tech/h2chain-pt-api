@@ -62,6 +62,7 @@ const auth = {
     const id = getUserId(ctx)
     const users = await ctx.prismaClient.users({ where: { id } })
     const personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: id } } })
+    console.log("personalmsg:",personalmsgs)
     //判断是否是第一次更新个人信息
     var flag = 0
     if ( personalmsgs[0].name == '') {
