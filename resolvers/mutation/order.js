@@ -6,6 +6,8 @@ const math = require('math');
 const config = require('../../conf/config');
 const formid = require('../../msg/msghandle/formid/redis')
 const client = new services.MutationClient(config.localip, grpc.credentials.createInsecure());
+
+    function registry(request){ return new Promise((resolve,reject)=>{client.registryOrder(request,(err,data) =>{if (err) reject(err);resolve(data)})})}
 const order = {
     async registerorder(parent, args, ctx, info) {
         try {
@@ -14,7 +16,7 @@ const order = {
             const id = getUserId(ctx)
             var personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: id } } })
             if (personalmsgs[0].name == null || personalmsgs[0].name == undefined || personalmsgs[0].name == '') {
-                throw new Error('cannot register order without making personalmessages')
+              throw new Error('cannot register order without making personalmessages')
             }
             request.setPtid(id);
             request.setAdviserid('001');
@@ -25,18 +27,24 @@ const order = {
             request.setPtstatus(args.registerorder.register);                       //PT状态，后端已经写好了第一次报名确认后，状态：1    
             request.setInviterid(args.registerorder.inviterid); //设置推荐人渠道
             request.setType(args.registerorder.type); //设置报名类型 1:自有报名 2:顾问分享报名 3:代理分享报名
-            await client.registryOrder(request, function (err, response) { if (response.array[0] == 2) { throw new Error("deplucated time") }});
+            var res = await registry(request)
+            console.log(res)
+            if (res.array[0] == 2){
+              throw new Error("duplicate time")
+            } 
+//function (err, response) { if (response.array[0] == 2) { throw new Error("deplucated time") }});
             // set formid which is created when pt registry order
             var userId = id
             var orderId = args.registerorder.orderid
             var formId = args.formid
             var setRes = await formid.setFormId(userId, orderId, formId)
             console.log('set formid after registrying :', setRes)
-            return true
         } catch (error) {
             throw (error)
         }
+         return true
     },
+
 
     async modifyptoforder(parent, args, ctx, info) {
         try {
