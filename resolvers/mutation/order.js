@@ -25,7 +25,7 @@ const order = {
             request.setPtstatus(args.registerorder.register);                       //PT状态，后端已经写好了第一次报名确认后，状态：1    
             request.setInviterid(args.registerorder.inviterid); //设置推荐人渠道
             request.setType(args.registerorder.type); //设置报名类型 1:自有报名 2:顾问分享报名 3:代理分享报名
-            await client.registryOrder(request, function (err, response) { if (response.array[0] == 2) { throw new Error("deplucated time") });
+            await client.registryOrder(request, function (err, response) { if (response.array[0] == 2) { throw new Error("deplucated time") }});
             // set formid which is created when pt registry order
             var userId = id
             var orderId = args.registerorder.orderid
