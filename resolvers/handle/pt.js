@@ -120,7 +120,7 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
 
             var hotel = {}
             //finished to retrieve adviser message to show to pts
-            var hotelId = res.orderOrigins[i].hotelID
+            var hotelId = res.orderOrigins[i].hotelId
             var hotels = await ctx.prismaHotel.users({ where: { id: hotelId } })
             var hotelProfiles = await ctx.prismaHotel.profiles({ where: { user: { id: hotelId } } })
             hotel['hotelname'] = hotelProfiles[0].name
@@ -128,6 +128,8 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
             hotel['hotelintroduction'] = hotelProfiles[0].introduction
             hotel['hoteladdress'] = hotelProfiles[0].address
             hotel['cover'] = hotelProfiles[0].cover
+            hotel['longitude'] = hotelProfiles[0].longitude
+            hotel['latitude'] = hotelProfiles[0].latitude
 
             // 查询当前订单下该PT的状态
             try {
@@ -166,7 +168,10 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
             obj['postorder'] = postorder
             obj['hotel'] = hotel
             obj['modifiedorder'] = modifiedorder
-
+            var contracts = await ctx.prismaHotel.contracts({ where: { AND: [{ orderid: res.orderOrigins[i].id }, { ptid: ptid }] } })
+            if (contracts.length != 0) {
+                obj['hash'] = contracts[0].hash
+            }
             historyorders.push(obj)
         }
         return historyorders
@@ -184,6 +189,9 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
         request.setStatus(2)
         var response = await queryOrder(request);
         var res = JSON.parse(response.array[0])
+        if (!res.orderOrigins[0]){
+            throw new Error("cannot find this order, is it closed?")
+        }
         var orderList = []
         for (var i = 0; i < res.orderOrigins.length; i++) {
             var obj = {}
@@ -265,7 +273,7 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
 
             var hotel = {}
             //FINISHED to retrieve hotel messages to show to pts
-            var hotelId = res.orderOrigins[i].hotelID
+            var hotelId = res.orderOrigins[i].hotelId
             var hotels = await ctx.prismaHotel.users({ where: { id: hotelId } })
             var hotelProfiles = await ctx.prismaHotel.profiles({ where: { user: { id: hotelId } } })
             hotel['hotelname'] = hotelProfiles[0].name
@@ -284,20 +292,20 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
 
             // 查询当前订单下该PT的状态(已报名)
             // if we are searching what the pt has registered we have to search ptorderstate
-            if (id.indexOf("some") >= 0) {
-                try {
-                    var request = new messages.QueryPTRequest();
-                    request.setOrderid(res.orderOrigins[i].id);
-                    request.setPtid(initialid);
-                    var response = await queryPt(request)
-                    //防止查到none的情况，加上保护，此类情况下，会出现不关联的情况
-                    if (response.array[0].length != 0) {
-                        obj['ptorderstate'] = response.array[0][0][7]
-                    }
-                } catch (error) {
-                    throw error
+            //if (id.indexOf("some") >= 0) {
+            try {
+                var request = new messages.QueryPTRequest();
+                request.setOrderid(res.orderOrigins[i].id);
+                request.setPtid(initialid);
+                var response = await queryPt(request)
+                //防止查到none的情况，加上保护，此类情况下，会出现不关联的情况
+                if (response.array[0][0]) {
+                    obj['ptorderstate'] = response.array[0][0][7]
                 }
+            } catch (error) {
+                throw error
             }
+            //}
 
             // 查询当前已报名的男女人数
             // 调用queryPTOfOrder()接口查询，某个订单下已报名PT的总人数
@@ -313,13 +321,11 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
                 for (var k = 0; k < obj['countyet']; k++) {
                     var ptid = response.array[0][k][0]
                     var personalmsgs = await ctx.prismaClient.personalmsgs({ where: { user: { id: ptid } } })
-                    // to judge if there is a male or female to aviod deleting sql leading some the pts who has already registered
-                    if (personalmsgs[0] != undefined) {
-                        if (personalmsgs[0].gender == 1) {
-                            obj['maleyet'] = obj['maleyet'] + 1
-                        } else {
-                            obj['femaleyet'] == obj['femaleyet'] + 1
-                        }
+                    // to judge if there is a male or female
+                    if (JSON.parse(personalmsgs[0].gender) == 1) {
+                        obj['maleyet'] = obj['maleyet'] + 1
+                    } else if (JSON.parse(personalmsgs[0].gender == 2)) {
+                        obj['femaleyet'] = obj['femaleyet'] + 1
                     }
                 }
                 // ptid  response.array[0][0][0]
