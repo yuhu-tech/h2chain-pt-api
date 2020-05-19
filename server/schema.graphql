@@ -75,7 +75,7 @@ type Hotel {
 
 type Postorder {
 	orderid: String
-	salary: Int
+	salary: Float
 	workcontent: String
 	attention: String
 }

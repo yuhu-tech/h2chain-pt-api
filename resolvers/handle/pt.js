@@ -113,7 +113,7 @@ async function GetHistoryOrders(ctx, initialid, id, orderid, datetime) {
 
             var postorder = {}
             if (res.orderOrigins[i].orderAdviserModifies.length != 0) {
-                postorder['salary'] = res.orderOrigins[i].orderAdviserModifies[0].hourlySalary
+                postorder['salary'] = res.orderOrigins[i].orderAdviserModifies[0].hourlySalary / 100
                 postorder['workcontent'] = res.orderOrigins[i].orderAdviserModifies[0].workCount // 这里有一个命名错误，是由于datamodel.graphql 里面字段错误造成的，后续会改
                 postorder['attention'] = res.orderOrigins[i].orderAdviserModifies[0].attention
             }
@@ -190,11 +190,17 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
         var response = await queryOrder(request);
         var res = JSON.parse(response.array[0])
         var orderList = []
+
+//vincent feature added 2019.9.10 to now to show the order that has already begun
         for (var i = 0; i < res.orderOrigins.length; i++) {
+            if (id.indexOf('none') != -1){
+                if ( res.orderOrigins[i].datetime * 1000 < new Date().getTime() ){
+//                    continue
+                }
+            }
+            
             var obj = {}
-
             var modifiedorder = []
-
             if (res.orderOrigins[i].orderHotelModifies.length != 0) {
                 for (var j = 0; j < res.orderOrigins[i].orderHotelModifies.length; j++) {
                     var modifiedorderObj = {}
@@ -285,7 +291,7 @@ async function PTGetOrderList(ctx, initialid, id, orderid, datetime) {
             var postorder = {}
             if (res.orderOrigins[i].orderAdviserModifies.length != 0) {
                 postorder['orderid'] = res.orderOrigins[i].id
-                postorder['salary'] = res.orderOrigins[i].orderAdviserModifies[0].hourlySalary
+                postorder['salary'] = res.orderOrigins[i].orderAdviserModifies[0].hourlySalary / 100
                 postorder['workcontent'] = res.orderOrigins[i].orderAdviserModifies[0].workCount   // 这里有一个命名错误，是由于datamodel.graphql 里面字段错误造成的，后续会改
                 postorder['attention'] = res.orderOrigins[i].orderAdviserModifies[0].attention
             }
